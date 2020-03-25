@@ -375,6 +375,13 @@ export class DtCheckbox<T> extends _DtCheckboxMixinBase
 
     if (this._currentAnimationClass.length > 0) {
       element.classList.add(this._currentAnimationClass);
+      if (newState === TransitionCheckState.Unchecked) {
+        const animationEndHandler = () => {
+          element.classList.remove(this._currentAnimationClass);
+          element.removeEventListener('animationend', animationEndHandler);
+        };
+        element.addEventListener('animationend', animationEndHandler);
+      }
     }
   }
 }

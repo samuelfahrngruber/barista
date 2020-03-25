@@ -28,6 +28,7 @@ import { DtFormFieldModule } from '@dynatrace/barista-components/form-field';
 import { DtFormattersModule } from '@dynatrace/barista-components/formatters';
 import { DtIconModule } from '@dynatrace/barista-components/icon';
 import { DtInputModule } from '@dynatrace/barista-components/input';
+import { DtCheckboxModule } from '@dynatrace/barista-components/checkbox';
 
 import { DtCell, DtCellDef, DtColumnDef } from './cell';
 import {
@@ -42,12 +43,13 @@ import {
   DtHeaderRowDef,
 } from './header/index';
 import { DtRow, DtRowDef } from './row';
+import { DtSelectableColumnComponent } from './selectable-column';
 import { DtTableSearch } from './search/index';
 import {
+  DtFavoriteColumn,
   DtSimpleNumberColumn,
   DtSimpleOrderColumn,
   DtSimpleTextColumn,
-  DtFavoriteColumn,
 } from './simple-columns/index';
 import { DtSort } from './sort/sort';
 import { DtSortHeader } from './sort/sort-header';
@@ -55,6 +57,7 @@ import { DtTableLoadingState } from './states/index';
 import { DtOrder } from './order/order-directive';
 import { DtOrderCell } from './order/order-cell';
 import { DtTable } from './table';
+import { DtSelectableTable } from './selectable-table';
 
 const EXPORTED_DECLARATIONS = [
   DtTable,
@@ -79,6 +82,8 @@ const EXPORTED_DECLARATIONS = [
   DtSimpleNumberColumn,
   DtSimpleOrderColumn,
   DtExpandableRowContent,
+  DtSelectableColumnComponent,
+  DtSelectableTable,
   DtFavoriteColumn,
 ];
 
@@ -96,6 +101,7 @@ const EXPORTED_DECLARATIONS = [
     DtFormattersModule,
     DtEmptyStateModule,
     ReactiveFormsModule,
+    DtCheckboxModule,
   ],
   exports: [...EXPORTED_DECLARATIONS, DtIndicatorModule],
   declarations: [...EXPORTED_DECLARATIONS],

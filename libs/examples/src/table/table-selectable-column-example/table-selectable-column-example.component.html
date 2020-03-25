@@ -1,0 +1,35 @@
+<dt-table [dataSource]="dataSource" #sortable dtSort>
+  <dt-selectable-column
+    name="select"
+    label=""
+    (selectionChanged)="rowSelectionChanged($event)"
+    selectionLimit="5"
+  ></dt-selectable-column>
+  <dt-simple-text-column name="host" label="Host"></dt-simple-text-column>
+  <dt-simple-number-column name="cpu" label="CPU"></dt-simple-number-column>
+  <dt-header-row *dtHeaderRowDef="['select', 'host', 'cpu']"></dt-header-row>
+  <dt-row *dtRowDef="let row; columns: ['select', 'host', 'cpu']"></dt-row>
+  <!--<ng-container #columns>
+    <dt-simple-text-column name="host" label="Host"></dt-simple-text-column>
+    <dt-simple-number-column
+      name="cpu"
+      label="CPU"
+    ></dt-simple-number-column>
+    <dt-header-row *dtHeaderRowDef="['select', 'host', 'cpu']"></dt-header-row>
+    <dt-row
+      *dtRowDef="
+        let row;
+        columns: ['select', 'host', 'cpu']
+      "
+    ></dt-row>
+  </ng-container>-->
+</dt-table>
+<div class="dt-selection-panel">Current selection:</div>
+<ng-container>{{ currentSelection.join(', ') }}</ng-container>
+
+<dt-selectable-table [dataSource]="dataSource" dtSort>
+  <dt-simple-text-column name="host" label="Host"></dt-simple-text-column>
+  <dt-simple-number-column name="cpu" label="CPU"></dt-simple-number-column>
+  <dt-header-row *dtHeaderRowDef="['host', 'cpu']"></dt-header-row>
+  <dt-row *dtRowDef="let row; columns: ['host', 'cpu']"></dt-row>
+</dt-selectable-table>

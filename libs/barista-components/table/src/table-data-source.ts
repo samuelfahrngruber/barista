@@ -37,6 +37,7 @@ import {
 } from './simple-columns/simple-column-base';
 import { DtSort, DtSortEvent } from './sort/sort';
 import { DtTable } from './table';
+import { CollectionViewer } from '@angular/cdk/collections';
 
 export type DtSortAccessorFunction<T> = (data: T) => any; // tslint:disable-line:no-any
 
@@ -56,6 +57,8 @@ export class DtTableDataSource<T> extends DataSource<T> {
    * shown to the user rather than all the data.
    */
   filteredData: T[];
+
+  filteredDataChange$: Subject<T[]> = new BehaviorSubject([]);
 
   /** @internal DisplayAccessorMap for SimpleColumn displayAccessor functions. */
   _displayAccessorMap: Map<
@@ -385,6 +388,8 @@ export class DtTableDataSource<T> extends DataSource<T> {
     this.filteredData = !this.filter
       ? data
       : data.filter((obj: T) => this.filterPredicate(obj, this.filter));
+
+    this.filteredDataChange$.next(this.filteredData);
 
     if (
       this._pagination &&

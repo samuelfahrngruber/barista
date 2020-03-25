@@ -7,6 +7,7 @@
 
 <ng-container>
   <dt-table [dataSource]="dataSource">
+    <dt-selectable-column name="select"></dt-selectable-column>
     <ng-container dtColumnDef="host" dtColumnAlign="text">
       <dt-header-cell *dtHeaderCellDef>Host</dt-header-cell>
       <dt-cell *dtCellDef="let row">
@@ -33,12 +34,19 @@
       ></dt-expandable-cell>
     </ng-container>
     <dt-header-row
-      *dtHeaderRowDef="['host', 'memory', 'cpu', 'traffic', 'details']"
+      *dtHeaderRowDef="[
+        'select',
+        'host',
+        'memory',
+        'cpu',
+        'traffic',
+        'details'
+      ]"
     ></dt-header-row>
     <dt-expandable-row
       *dtRowDef="
         let row;
-        columns: ['host', 'memory', 'cpu', 'traffic', 'details']
+        columns: ['select', 'host', 'memory', 'cpu', 'traffic', 'details']
       "
       [expanded]="row.expanded"
     >
