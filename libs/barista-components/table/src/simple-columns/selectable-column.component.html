@@ -1,17 +1,21 @@
-<ng-container dtColumnDef="select">
+<ng-container [dtColumnDef]="name">
   <ng-container *dtHeaderCellDef>
     <dt-header-cell class="dt-selectable-column">
       <dt-checkbox
-        *ngIf="multiSelect"
+        *ngIf="showHeaderCheckbox"
         (change)="toggleAll($event)"
+        [checked]="allSelected"
+        [indeterminate]="isAnySelected()"
       ></dt-checkbox>
+      {{ label }}
     </dt-header-cell>
   </ng-container>
 
   <dt-cell *dtCellDef="let row" class="dt-selectable-column">
     <dt-checkbox
-      [disabled]="row.disabled"
-      (change)="toggleRow($event)"
+      [disabled]="isDisabled(row)"
+      [checked]="isChecked(row)"
+      (change)="toggleRow($event, row)"
     ></dt-checkbox>
   </dt-cell>
 </ng-container>

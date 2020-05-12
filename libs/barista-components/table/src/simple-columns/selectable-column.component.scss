@@ -1,5 +1,10 @@
 .dt-selectable-column.dt-selectable-column.dt-selectable-column {
-  flex: 0 0 50px;
+  /*flex: 0 0 auto;*/
+}
+
+.dt-selectable-column dt-checkbox {
+  width: 20px;
+  margin-right: 8px;
 }
 
 dt-header-cell.dt-selectable-column.dt-selectable-column.dt-selectable-column {

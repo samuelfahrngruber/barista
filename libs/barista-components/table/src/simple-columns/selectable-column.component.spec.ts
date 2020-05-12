@@ -1,6 +1,6 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { DtSelectableColumnComponent } from './selectable-column.component';
+import { DtCheckboxColumnComponent } from './selectable-column.component';
 import { Component } from '@angular/core';
 
 describe('DtSelectableColumnComponent', () => {
@@ -9,7 +9,7 @@ describe('DtSelectableColumnComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [DtSelectableColumnComponent],
+      declarations: [DtCheckboxColumnComponent],
     }).compileComponents();
   }));
 

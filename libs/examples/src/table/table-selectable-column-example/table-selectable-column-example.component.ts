@@ -50,6 +50,10 @@ export class DtExampleTableSelectableColumnComponent implements AfterViewInit {
       host: 'et-demo-2-win8',
       cpu: 23,
     },
+    {
+      host: 'my host (disabled)',
+      cpu: 13,
+    },
   ];
 
   currentSelection: string[] = [];
@@ -70,5 +74,9 @@ export class DtExampleTableSelectableColumnComponent implements AfterViewInit {
 
   rowSelectionChanged(event: DtSelectionChangedEvent<Row>): void {
     this.currentSelection = event.selection.map(row => row.host);
+  }
+
+  isSelectable(entry: { host: string; cpu: number }): boolean {
+    return !entry.host.endsWith('(disabled)');
   }
 }

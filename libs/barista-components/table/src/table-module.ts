@@ -43,7 +43,6 @@ import {
   DtHeaderRowDef,
 } from './header/index';
 import { DtRow, DtRowDef } from './row';
-import { DtSelectableColumnComponent } from './selectable-column';
 import { DtTableSearch } from './search/index';
 import {
   DtFavoriteColumn,
@@ -58,6 +57,9 @@ import { DtOrder } from './order/order-directive';
 import { DtOrderCell } from './order/order-cell';
 import { DtTable } from './table';
 import { DtSelectableTable } from './selectable-table';
+import { DtCheckboxColumnComponent } from './simple-columns/selectable-column.component';
+import { DtSelectableColumnComponent } from './selectable-column';
+import { DtCheckboxTable } from './checkbox-table/checkbox-table';
 
 const EXPORTED_DECLARATIONS = [
   DtTable,
@@ -82,9 +84,11 @@ const EXPORTED_DECLARATIONS = [
   DtSimpleNumberColumn,
   DtSimpleOrderColumn,
   DtExpandableRowContent,
+  DtCheckboxColumnComponent,
   DtSelectableColumnComponent,
   DtSelectableTable,
   DtFavoriteColumn,
+  DtCheckboxTable,
 ];
 
 @NgModule({
@@ -103,7 +107,11 @@ const EXPORTED_DECLARATIONS = [
     ReactiveFormsModule,
     DtCheckboxModule,
   ],
-  exports: [...EXPORTED_DECLARATIONS, DtIndicatorModule],
-  declarations: [...EXPORTED_DECLARATIONS],
+  exports: [
+    ...EXPORTED_DECLARATIONS,
+    DtIndicatorModule,
+    DtCheckboxColumnComponent,
+  ],
+  declarations: [...EXPORTED_DECLARATIONS, DtCheckboxColumnComponent],
 })
 export class DtTableModule {}

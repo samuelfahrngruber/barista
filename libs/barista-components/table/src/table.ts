@@ -19,7 +19,6 @@ import { Platform } from '@angular/cdk/platform';
 import { CdkPortalOutlet, TemplatePortal } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
 import {
-  AfterViewInit,
   Attribute,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -36,7 +35,7 @@ import {
   ViewContainerRef,
   ViewEncapsulation,
 } from '@angular/core';
-import { Subject, Subscription, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { mapTo } from 'rxjs/operators';
 
 import { DtEmptyState } from '@dynatrace/barista-components/empty-state';
@@ -46,8 +45,7 @@ import {
   DtSimpleColumnComparatorFunction,
   DtSimpleColumnDisplayAccessorFunction,
   DtSimpleColumnSortAccessorFunction,
-} from './simple-columns/simple-column-base';
-import { DtSelectableColumnComponent } from './selectable-column';
+} from './simple-columns';
 
 interface SimpleColumnsAccessorMaps<T> {
   displayAccessorMap: Map<string, DtSimpleColumnDisplayAccessorFunction<T>>;
@@ -69,8 +67,7 @@ let nextUniqueId = 0;
     '[class.dt-table-interactive-rows]': 'interactiveRows',
   },
 })
-export class DtTable<T> extends _DtTableBase<T>
-  implements OnDestroy, AfterViewInit {
+export class DtTable<T> extends _DtTableBase<T> implements OnDestroy {
   private _multiExpand: boolean; // TODO: discuss default value with UX, should maybe change from false to true
   private _loading: boolean;
   private _destroy$ = new Subject<void>();
@@ -128,9 +125,6 @@ export class DtTable<T> extends _DtTableBase<T>
   @ViewChild(CdkPortalOutlet, { static: true })
   _portalOutlet: CdkPortalOutlet;
 
-  @ViewChild(DtSelectableColumnComponent, { static: true })
-  _selectableColumn: DtSelectableColumnComponent<T>;
-
   /** @internal Stream of all simple dataAccessor functions for all SimpleColumns */
   _dataAccessors = new BehaviorSubject<SimpleColumnsAccessorMaps<T>>({
     displayAccessorMap: this._displayAccessorMap,
@@ -161,11 +155,6 @@ export class DtTable<T> extends _DtTableBase<T>
     private _viewContainerRef: ViewContainerRef,
   ) {
     super(differs, changeDetectorRef, elementRef, document, platform, role);
-  }
-
-  ngAfterViewInit(): void {
-    if (this._selectableColumn) {
-    }
   }
 
   ngOnDestroy(): void {
