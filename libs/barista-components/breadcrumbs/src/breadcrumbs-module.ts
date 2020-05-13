@@ -21,10 +21,11 @@ import { RouterModule } from '@angular/router';
 
 import { DtBreadcrumbs } from './breadcrumbs';
 import { DtBreadcrumbsItem2 } from './breadcrumbs-item';
+import { PortalModule } from '@angular/cdk/portal';
 
 @NgModule({
   exports: [DtBreadcrumbs, DtBreadcrumbsItem2],
   declarations: [DtBreadcrumbs, DtBreadcrumbsItem2],
-  imports: [A11yModule, CommonModule, RouterModule],
+  imports: [A11yModule, CommonModule, RouterModule, PortalModule],
 })
 export class DtBreadcrumbsModule {}

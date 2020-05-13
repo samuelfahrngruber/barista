@@ -30,7 +30,7 @@ import { Directive, ElementRef } from '@angular/core';
   },
 })
 export class DtBreadcrumbsItem2 {
-  constructor(private readonly _elementRef: ElementRef<HTMLAnchorElement>) {}
+  constructor(readonly _elementRef: ElementRef<HTMLAnchorElement>) {}
 
   /** @internal */
   _setCurrent(current: boolean): void {
