@@ -10,6 +10,7 @@ $arrow-padding: 2px;
 :host {
   display: flex;
   background-color: #ffffff;
+  border: 1px solid red;
 }
 
 :host ::ng-deep a.dt-breadcrumbs-item {
@@ -42,7 +43,7 @@ $arrow-padding: 2px;
   }
 
   &:last-child {
-    flex-grow: 1;
+    //flex-grow: 1;
 
     &::after {
       display: none;
