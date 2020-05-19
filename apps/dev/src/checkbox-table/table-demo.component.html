@@ -28,10 +28,7 @@
     </ng-container>
     <ng-container dtColumnDef="details" dtColumnAlign="number">
       <dt-header-cell *dtHeaderCellDef>Details</dt-header-cell>
-      <dt-expandable-cell
-        *dtCellDef
-        ariaLabel="Expand the row"
-      ></dt-expandable-cell>
+      <dt-expandable-cell *dtCellDef></dt-expandable-cell>
     </ng-container>
     <dt-header-row
       *dtHeaderRowDef="[
@@ -54,7 +51,7 @@
         <dt-chart [options]="options" [series]="series">
           <dt-chart-tooltip>
             <ng-template let-tooltip>
-              <dt-key-value-list style="min-width: 100px">
+              <dt-key-value-list style="min-width: 100px;">
                 <dt-key-value-list-item *ngFor="let data of tooltip.points">
                   <dt-key-value-list-key>
                     {{ data.series.name }}

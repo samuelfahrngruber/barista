@@ -54,7 +54,7 @@ export class DtSelectableTable<T> implements AfterViewInit {
       this.headers.push(result.value);
       result = iterator.next();
     }
-    this._simpleColumns.forEach(col => {
+    this._simpleColumns.forEach((col) => {
       this._table.addColumnDef(col._columnDef);
     });
     this.changeDetectorRef.detectChanges();

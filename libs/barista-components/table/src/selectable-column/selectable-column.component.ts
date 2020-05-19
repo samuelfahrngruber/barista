@@ -13,12 +13,12 @@ import {
 import {
   CollectionViewer,
   isDataSource,
+  ListRange,
   SelectionModel,
 } from '@angular/cdk/collections';
 import { DtTable } from '../table';
 import { DtSimpleColumnBase } from '../simple-columns';
 import { BehaviorSubject, Observable, of, Subject, Subscription } from 'rxjs';
-import { ListRange } from '@angular/cdk/collections';
 import { takeUntil } from 'rxjs/operators';
 import { DtTableDataSource } from '../table-data-source';
 
@@ -96,7 +96,7 @@ export class DtSelectableColumnComponent<T> extends DtSimpleColumnBase<T>
     }
     this.dataSubscription = dataStream$
       .pipe(takeUntil(this._onDestroy))
-      .subscribe(data => this.updateData(data));
+      .subscribe((data) => this.updateData(data));
   }
 
   isAllSelected(): boolean {
@@ -143,7 +143,7 @@ export class DtSelectableColumnComponent<T> extends DtSimpleColumnBase<T>
   }
 
   toggle(...values: T[]) {
-    values.forEach(item => this.selection.toggle(item));
+    values.forEach((item) => this.selection.toggle(item));
   }
 
   updateData(data: T[]) {
@@ -157,7 +157,7 @@ export class DtSelectableColumnComponent<T> extends DtSimpleColumnBase<T>
     this._onDestroy.complete();
   }
 
-  protected toggleRow(row: T): void {
+  toggleRow(row: T): void {
     this.selection.toggle(row);
     this.rowChanged.emit({
       row: row,
@@ -174,7 +174,7 @@ export class DtSelectableColumnComponent<T> extends DtSimpleColumnBase<T>
       const additionalEntries =
         this.selectionLimit - this.selection.selected.length;
       const remainingData = this.data.filter(
-        row => !this.selection.isSelected(row),
+        (row) => !this.selection.isSelected(row),
       );
       return this.selection.selected.concat(
         remainingData.slice(
