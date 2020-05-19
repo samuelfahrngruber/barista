@@ -39,3 +39,4 @@ export * from './src/table-order-data-source';
 export * from './src/base-table';
 
 export * from './src/table-data-source';
+export * from './src/selection/selection';

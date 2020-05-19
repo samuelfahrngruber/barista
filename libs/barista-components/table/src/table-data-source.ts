@@ -17,12 +17,12 @@
 import { DataSource } from '@angular/cdk/table';
 import {
   BehaviorSubject,
-  Observable,
-  Subject,
-  Subscription,
   combineLatest,
   merge,
+  Observable,
   of,
+  Subject,
+  Subscription,
 } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 
@@ -34,10 +34,13 @@ import {
   DtSimpleColumnComparatorFunction,
   DtSimpleColumnDisplayAccessorFunction,
   DtSimpleColumnSortAccessorFunction,
-} from './simple-columns/simple-column-base';
+} from './simple-columns';
 import { DtSort, DtSortEvent } from './sort/sort';
 import { DtTable } from './table';
-import { CollectionViewer } from '@angular/cdk/collections';
+import { CollectionViewer, SelectionModel } from '@angular/cdk/collections';
+import { DtSelection, DtSelectionChangeEvent } from './selection/selection';
+import { isNil } from 'lodash-es';
+import { DtCheckboxColumnDisplayAccessor } from './simple-columns/selectable-column.component';
 
 export type DtSortAccessorFunction<T> = (data: T) => any; // tslint:disable-line:no-any
 
@@ -210,6 +213,29 @@ export class DtTableDataSource<T> extends DataSource<T> {
   }
   private _pageSize: number = DEFAULT_PAGE_SIZE;
 
+  get selection(): DtSelection<T> | null {
+    return this._selection;
+  }
+
+  set selection(selection: DtSelection<T> | null) {
+    this._selection = selection;
+    if (!isNil(this._selection)) {
+      this._selection.displayAccessor = (
+        data: T,
+      ): DtCheckboxColumnDisplayAccessor => {
+        return {
+          disabled: !this._isSelectable(data),
+          checked: this.selectionModel.isSelected(data),
+          indeterminate: false,
+        };
+      };
+    }
+    this._updateChangeSubscription();
+  }
+
+  private _selection: DtSelection<T> | null = null;
+  selectionModel = new SelectionModel<T>(true, [], false);
+
   /**
    * Data accessor function that is used for accessing data properties for sorting through
    * the default sortData function.
@@ -339,6 +365,11 @@ export class DtTableDataSource<T> extends DataSource<T> {
         )
       : of(null);
 
+    const selectionChange: Observable<DtSelectionChangeEvent<T> | null> = this
+      ._selection
+      ? this._selection.selectionChange
+      : of(null);
+
     const dataStream = this._data;
 
     // Watch for base data or filter changes to provide a filtered set of data.
@@ -351,8 +382,12 @@ export class DtTableDataSource<T> extends DataSource<T> {
       map(([data]) => this._sortData(data)),
     );
 
+    const selectedData = combineLatest([sortedData, selectionChange]).pipe(
+      map(([data, event]) => this._selectData(data, event)),
+    );
+
     // Watch for ordered data or page changes to provide a paged set of data.
-    const paginatedData = combineLatest([sortedData, pageChange]).pipe(
+    const paginatedData = combineLatest([selectedData, pageChange]).pipe(
       map(([data]) => this._pageData(data)),
     );
 
@@ -375,6 +410,39 @@ export class DtTableDataSource<T> extends DataSource<T> {
     }
 
     return this.sortData(data.slice(), this.sort);
+  }
+
+  _selectData(data: T[], event: DtSelectionChangeEvent<T> | null): T[] {
+    if (isNil(event) || isNil(this._selection)) {
+      return data;
+    }
+    if (isNil(event.toggledRow)) {
+      if (this.selectionModel.selected.length !== data.length) {
+        this.selectionModel.select(...data);
+      } else {
+        this.selectionModel.deselect(...data);
+      }
+    } else if (this._isSelectable(event.toggledRow)) {
+      this.selectionModel.toggle(event.toggledRow);
+    }
+    this._selection.anySelected =
+      this.selectionModel.selected.length !== data.length &&
+      this.selectionModel.selected.length > 0;
+    this._selection.allSelected =
+      (this.selectionModel.selected.length === data.length ||
+        this.selectionModel.selected.length >=
+          this._selection.selectionLimit) &&
+      this.selectionModel.selected.length > 0;
+    return data;
+  }
+
+  private _isSelectable(data: T): boolean {
+    return (
+      this.selectionModel.isSelected(data) ||
+      (!isNil(this._selection) &&
+        this._selection.selectable(data) &&
+        this.selectionModel.selected.length < this._selection.selectionLimit)
+    );
   }
 
   /**

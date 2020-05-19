@@ -1,13 +1,13 @@
-<dt-checkbox-table
-  [dataSource]="dataSource"
-  #sortable
-  dtSort
-  selectionLimit="30"
-  [isSelectable]="isSelectable"
->
-  <dt-checkbox-column name="checkbox" label="Select hosts"></dt-checkbox-column>
+<dt-table [dataSource]="dataSource" dtSort>
+  <dt-checkbox-column
+    name="checkbox"
+    label="Select hosts"
+    dtSelection
+    [selectionLimit]="5"
+    [selectable]="isSelectable"
+  ></dt-checkbox-column>
   <dt-simple-text-column name="host" label="Host"></dt-simple-text-column>
   <dt-simple-number-column name="cpu" label="CPU"></dt-simple-number-column>
   <dt-header-row *dtHeaderRowDef="['checkbox', 'host', 'cpu']"></dt-header-row>
   <dt-row *dtRowDef="let row; columns: ['checkbox', 'host', 'cpu']"></dt-row>
-</dt-checkbox-table>
+</dt-table>

@@ -60,6 +60,7 @@ import { DtSelectableTable } from './selectable-table';
 import { DtCheckboxColumnComponent } from './simple-columns/selectable-column.component';
 import { DtSelectableColumnComponent } from './selectable-column';
 import { DtCheckboxTable } from './checkbox-table/checkbox-table';
+import { DtSelection } from './selection/selection';
 
 const EXPORTED_DECLARATIONS = [
   DtTable,
@@ -77,6 +78,7 @@ const EXPORTED_DECLARATIONS = [
   DtOrder,
   DtOrderCell,
   DtTableLoadingState,
+  DtSelection,
   DtSort,
   DtSortHeader,
   DtTableSearch,
@@ -107,11 +109,7 @@ const EXPORTED_DECLARATIONS = [
     ReactiveFormsModule,
     DtCheckboxModule,
   ],
-  exports: [
-    ...EXPORTED_DECLARATIONS,
-    DtIndicatorModule,
-    DtCheckboxColumnComponent,
-  ],
-  declarations: [...EXPORTED_DECLARATIONS, DtCheckboxColumnComponent],
+  exports: [...EXPORTED_DECLARATIONS, DtIndicatorModule],
+  declarations: [...EXPORTED_DECLARATIONS],
 })
 export class DtTableModule {}

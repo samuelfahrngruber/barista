@@ -1,3 +1,19 @@
+/**
+ * @license
+ * Copyright 2020 Dynatrace LLC
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import {
   AfterContentInit,
   ChangeDetectionStrategy,
@@ -5,6 +21,7 @@ import {
   ContentChild,
   EventEmitter,
   Input,
+  OnDestroy,
   Output,
   Predicate,
   ViewEncapsulation,
@@ -34,7 +51,8 @@ import { Subject, Subscription } from 'rxjs';
   },
   providers: [{ provide: DtTable, useExisting: DtCheckboxTable }],
 })
-export class DtCheckboxTable<T> extends DtTable<T> implements AfterContentInit {
+export class DtCheckboxTable<T> extends DtTable<T>
+  implements AfterContentInit, OnDestroy {
   private _selectionLimit: number | null = null;
   private _isSelectable: Predicate<T> = () => true;
   private _selectionModel = new SelectionModel<T>(true, [], true);
@@ -84,10 +102,11 @@ export class DtCheckboxTable<T> extends DtTable<T> implements AfterContentInit {
             !this._selectionModel.isSelected(data) &&
             this._selectionModel.isMultipleSelection(),
           checked: this._selectionModel.isSelected(data),
+          indeterminate: false,
         };
       };
       this._subscriptions.push(
-        this._selectableColumn.toggleAllEvent.subscribe(() => {
+        this._selectableColumn.toggleAll.subscribe(() => {
           if (
             this._isSelectionLimitReached() ||
             this._selectionModel.selected.length ==
@@ -102,7 +121,7 @@ export class DtCheckboxTable<T> extends DtTable<T> implements AfterContentInit {
               let selection = this._selectionModel.selected;
               const entriesToAdd = this._selectionLimit - selection.length;
               let addedSelection = this._getSelectableData()
-                .filter(entry => selection.indexOf(entry) < 0)
+                .filter((entry) => selection.indexOf(entry) < 0)
                 .slice(0, entriesToAdd);
               this._selectionModel.select(...addedSelection);
             } else {
@@ -113,7 +132,7 @@ export class DtCheckboxTable<T> extends DtTable<T> implements AfterContentInit {
         }),
       );
       this._subscriptions.push(
-        this._selectableColumn.checkBoxToggled.subscribe(
+        this._selectableColumn.selectionToggled.subscribe(
           (event: DtCheckboxChange<T>) => {
             this._selectionModel.toggle(event.source.value);
             this._updateSelectableColumn();
@@ -127,14 +146,14 @@ export class DtCheckboxTable<T> extends DtTable<T> implements AfterContentInit {
     super.ngOnDestroy();
     this._untilDestroy$.next();
     this._untilDestroy$.complete();
-    this._subscriptions.forEach(sub => sub.unsubscribe());
+    this._subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   getSelection(): T[] {
     return this._selectionModel.selected;
   }
 
-  setSelection(selection: T[]) {
+  setSelection(selection: T[]): void {
     this._selectionModel.select(...selection);
   }
 
@@ -145,7 +164,7 @@ export class DtCheckboxTable<T> extends DtTable<T> implements AfterContentInit {
     );
   }
 
-  private _updateSelectableColumn() {
+  private _updateSelectableColumn(): void {
     this._selectableColumn.anySelected =
       this._selectionModel.selected.length > 0;
     this._selectableColumn.allSelected =
@@ -153,7 +172,7 @@ export class DtCheckboxTable<T> extends DtTable<T> implements AfterContentInit {
         this._getSelectableData().length || this._isSelectionLimitReached();
   }
 
-  private _getSelectableData() {
+  private _getSelectableData(): T[] {
     if (this.dataSource instanceof DtTableDataSource) {
       return this.dataSource.filteredData.filter(this._isSelectable);
     }
