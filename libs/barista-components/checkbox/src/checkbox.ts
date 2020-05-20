@@ -26,7 +26,6 @@ import {
   Directive,
   ElementRef,
   EventEmitter,
-  forwardRef,
   Input,
   OnDestroy,
   OnInit,
@@ -34,6 +33,7 @@ import {
   Provider,
   ViewChild,
   ViewEncapsulation,
+  forwardRef,
 } from '@angular/core';
 import {
   CheckboxRequiredValidator,
@@ -43,9 +43,9 @@ import {
 } from '@angular/forms';
 
 import {
-  _addCssClass,
   CanDisable,
   HasTabIndex,
+  _addCssClass,
   mixinDisabled,
   mixinTabIndex,
 } from '@dynatrace/barista-components/core';
