@@ -28,6 +28,7 @@ import { startWith } from 'rxjs/operators';
 
 import { DtPagination } from '@dynatrace/barista-components/pagination';
 import {
+  DtSelection,
   DtTableDataSource,
   DtTableSearch,
 } from '@dynatrace/barista-components/table';
@@ -56,6 +57,8 @@ export class CheckboxTableDemo implements OnInit, OnDestroy, AfterViewInit {
   tableSearch: DtTableSearch;
   @ViewChildren(DtPagination)
   paginationList: QueryList<DtPagination>;
+  @ViewChild(DtSelection, { static: true })
+  selection: DtSelection<HostUnit>;
 
   ngOnInit(): void {
     this.subscription = of(this.dataSource1).subscribe((data: HostUnit[]) => {
@@ -73,6 +76,7 @@ export class CheckboxTableDemo implements OnInit, OnDestroy, AfterViewInit {
         this.dataSource.pagination = null;
       }
     });
+    this.dataSource.selection = this.selection;
   }
 
   ngOnDestroy(): void {

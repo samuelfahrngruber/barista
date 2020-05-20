@@ -15,7 +15,7 @@
  */
 
 import {
-  AfterContentInit,
+  AfterViewInit,
   Directive,
   EventEmitter,
   Input,
@@ -25,9 +25,8 @@ import {
 } from '@angular/core';
 import { DtSelectableColumn } from '../simple-columns/selectable-column.component';
 import { isNil } from 'lodash-es';
-import { DtCheckboxChange } from '@dynatrace/barista-components/checkbox';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, Subject } from 'rxjs';
 import {
   DtSimpleColumnBase,
   DtSimpleColumnDisplayAccessorFunction,
@@ -42,21 +41,34 @@ export interface DtSelectionChangeEvent<T> {
   selector: '[dtSelection]',
   exportAs: 'dtSelection',
 })
-export class DtSelection<T> implements AfterContentInit, OnDestroy {
-  @Output('dtSelectionChange') readonly selectionChange: EventEmitter<
-    DtSelectionChangeEvent<T>
-  > = new EventEmitter<DtSelectionChangeEvent<T>>();
+export class DtSelection<T> implements AfterViewInit, OnDestroy {
+  @Output('dtSelectionChange')
+  readonly selectionChange: EventEmitter<T | null> = new EventEmitter<T | null>();
 
   @Input()
-  selectionLimit: number;
+  selectionLimit: number | undefined = undefined;
 
   @Input()
   selectable: Predicate<T> = () => true;
 
   private _selectableColumn: DtSelectableColumn<T> | undefined;
 
+  /** @internal Initialized subject that fires on initialization and completes on destroy. */
+  readonly _initialized = new BehaviorSubject<boolean>(false);
+
   constructor(_column: DtSimpleColumnBase<T>) {
     this._selectableColumn = (_column as unknown) as DtSelectableColumn<T>;
+    if (!isNil(this._selectableColumn)) {
+      this._selectableColumn.selectionToggled
+        .pipe(
+          takeUntil(this._destroy),
+          tap((event: T | null) => {
+            this.selectionChange.emit(event);
+          }),
+        )
+        .subscribe();
+      this._updateDisplayAccessor();
+    }
   }
 
   private _displayAccessor:
@@ -80,33 +92,15 @@ export class DtSelection<T> implements AfterContentInit, OnDestroy {
     }
   }
 
-  // @ContentChild(DtCheckboxColumnComponent)
-  // _selectableColumn: DtSelectableColumn<T>;
-
   private _destroy = new Subject<void>();
 
-  ngAfterContentInit(): void {
-    if (!isNil(this._selectableColumn)) {
-      this._selectableColumn.selectionToggled
-        .pipe(takeUntil(this._destroy))
-        .subscribe((event: DtCheckboxChange<T>) => {
-          this.selectionChange.emit({
-            toggledRow: event.source.value,
-          });
-        });
-      this._selectableColumn.toggleAll
-        .pipe(takeUntil(this._destroy))
-        .subscribe(() => {
-          this.selectionChange.emit({
-            toggledRow: null,
-          });
-        });
-      this._updateDisplayAccessor();
-    }
+  ngAfterViewInit(): void {
+    this._initialized.next(true);
   }
 
   ngOnDestroy(): void {
     this._destroy.complete();
+    this._initialized.complete();
   }
 
   private _updateDisplayAccessor(): void {

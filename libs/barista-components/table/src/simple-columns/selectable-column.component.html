@@ -3,7 +3,7 @@
     <dt-header-cell class="dt-selectable-column">
       <dt-checkbox
         *ngIf="showHeaderCheckbox"
-        (change)="toggleAll.emit($event)"
+        (change)="toggleAllSelection($event)"
         [checked]="allSelected"
         [indeterminate]="isAnySelected()"
       ></dt-checkbox>

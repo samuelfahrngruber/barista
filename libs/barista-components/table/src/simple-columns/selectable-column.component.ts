@@ -31,14 +31,13 @@ import {
 import { DtCheckboxChange } from '@dynatrace/barista-components/checkbox';
 
 export interface DtCheckboxColumnDisplayAccessor {
-  disabled: boolean;
-  checked: boolean;
-  indeterminate: boolean;
+  disabled?: boolean;
+  checked?: boolean;
+  indeterminate?: boolean;
 }
 
 export interface DtSelectableColumn<T> {
-  selectionToggled: EventEmitter<DtCheckboxChange<T>>;
-  toggleAll: EventEmitter<DtCheckboxChange<T>>;
+  selectionToggled: EventEmitter<T | null>;
   name: string;
   displayAccessor: DtSimpleColumnDisplayAccessorFunction<T>;
   allSelected: boolean;
@@ -52,16 +51,16 @@ export interface DtSelectableColumn<T> {
   preserveWhitespaces: false,
   encapsulation: ViewEncapsulation.Emulated,
   changeDetection: ChangeDetectionStrategy.Default,
-  providers: [
-    { provide: DtSimpleColumnBase, useExisting: DtCheckboxColumnComponent },
-  ],
+  providers: [{ provide: DtSimpleColumnBase, useExisting: DtCheckboxColumn }],
 })
-export class DtCheckboxColumnComponent<T> extends DtSimpleColumnBase<T>
+export class DtCheckboxColumn<T> extends DtSimpleColumnBase<T>
   implements DtSelectableColumn<T> {
   @Output()
-  readonly selectionToggled = new EventEmitter<DtCheckboxChange<T>>();
+  readonly checkboxRowChanged = new EventEmitter<DtCheckboxChange<T>>();
   @Output()
-  readonly toggleAll = new EventEmitter<DtCheckboxChange<T>>();
+  readonly checkboxHeaderChanged = new EventEmitter<DtCheckboxChange<T>>();
+  @Output()
+  readonly selectionToggled = new EventEmitter<T | null>();
 
   @Input()
   showHeaderCheckbox = true;
@@ -120,11 +119,12 @@ export class DtCheckboxColumnComponent<T> extends DtSimpleColumnBase<T>
   }
 
   toggleRow(changeEvent: DtCheckboxChange<T>, row: T): void {
-    changeEvent.source.value = row;
-    this.selectionToggled.emit(changeEvent);
+    this.checkboxRowChanged.emit(changeEvent);
+    this.selectionToggled.emit(row);
   }
 
   toggleAllSelection(changeEvent: DtCheckboxChange<T>): void {
-    this.toggleAll.emit(changeEvent);
+    this.checkboxHeaderChanged.emit(changeEvent);
+    this.selectionToggled.emit(null);
   }
 }

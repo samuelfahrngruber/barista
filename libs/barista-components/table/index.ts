@@ -23,7 +23,6 @@ export * from './src/states/index';
 export * from './src/header/index';
 export * from './src/search/index';
 export * from './src/simple-columns/index';
-export * from './src/selectable-column/index';
 export * from './src/table-data-source';
 
 /** sorting */

@@ -6,8 +6,12 @@
 ></dt-table-search>
 
 <ng-container>
-  <dt-checkbox-table [dataSource]="dataSource">
-    <dt-checkbox-column name="select"></dt-checkbox-column>
+  <dt-table [dataSource]="dataSource">
+    <dt-checkbox-column
+      [showHeaderCheckbox]="true"
+      dtSelection
+      name="select"
+    ></dt-checkbox-column>
     <ng-container dtColumnDef="host" dtColumnAlign="text">
       <dt-header-cell *dtHeaderCellDef>Host</dt-header-cell>
       <dt-cell *dtCellDef="let row">
@@ -28,7 +32,10 @@
     </ng-container>
     <ng-container dtColumnDef="details" dtColumnAlign="number">
       <dt-header-cell *dtHeaderCellDef>Details</dt-header-cell>
-      <dt-expandable-cell *dtCellDef></dt-expandable-cell>
+      <dt-expandable-cell
+        *dtCellDef
+        ariaLabel="Expand the row"
+      ></dt-expandable-cell>
     </ng-container>
     <dt-header-row
       *dtHeaderRowDef="[
@@ -69,7 +76,7 @@
         no chart
       </ng-template>
     </dt-expandable-row>
-  </dt-checkbox-table>
+  </dt-table>
 
   <dt-pagination></dt-pagination>
 </ng-container>

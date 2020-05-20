@@ -18,7 +18,6 @@ import { AfterViewInit, Component, ViewChild } from '@angular/core';
 
 import {
   DtSelection,
-  DtSelectionChangedEvent,
   DtSort,
   DtTableDataSource,
 } from '@dynatrace/barista-components/table';
@@ -73,15 +72,13 @@ export class DtExampleTableSelectableColumnComponent implements AfterViewInit {
     },
   ];
 
-  currentSelection: string[] = [];
-
   // Get the viewChild to pass the sorter reference to the datasource.
   @ViewChild(DtSort, { read: DtSort, static: true }) sortable: DtSort;
   @ViewChild(DtSelection, { read: DtSelection, static: true })
-  selection: DtSelection<object>;
+  selection: DtSelection<Row>;
 
   // Initialize the table's data source
-  dataSource: DtTableDataSource<object>;
+  dataSource: DtTableDataSource<Row>;
   constructor() {
     this.dataSource = new DtTableDataSource(this.data);
   }
@@ -92,8 +89,10 @@ export class DtExampleTableSelectableColumnComponent implements AfterViewInit {
     this.dataSource.selection = this.selection;
   }
 
-  rowSelectionChanged(event: DtSelectionChangedEvent<Row>): void {
-    this.currentSelection = event.selection.map((row) => row.host);
+  getCurrentSelection(): string {
+    return this.dataSource.selectionModel.selected
+      .map((data: Row) => data.host)
+      .join(', ');
   }
 
   isSelectable(entry: { host: string; cpu: number }): boolean {

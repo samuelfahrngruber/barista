@@ -1,7 +1,7 @@
 <dt-table [dataSource]="dataSource" dtSort>
   <dt-checkbox-column
     name="checkbox"
-    label="Select hosts"
+    [showHeaderCheckbox]="true"
     dtSelection
     [selectionLimit]="5"
     [selectable]="isSelectable"
@@ -11,3 +11,5 @@
   <dt-header-row *dtHeaderRowDef="['checkbox', 'host', 'cpu']"></dt-header-row>
   <dt-row *dtRowDef="let row; columns: ['checkbox', 'host', 'cpu']"></dt-row>
 </dt-table>
+
+Current selection: {{ getCurrentSelection() }}

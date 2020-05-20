@@ -1,6 +1,0 @@
-<dt-table [dataSource]="dataSource" #table>
-  <dt-selectable-column name="select"></dt-selectable-column>
-  <ng-content></ng-content>
-  <dt-header-row *dtHeaderRowDef="headers"></dt-header-row>
-  <dt-row *dtRowDef="let row; columns: headers"></dt-row>
-</dt-table>
