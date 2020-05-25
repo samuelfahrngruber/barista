@@ -29,10 +29,10 @@ interface Row {
 
 @Component({
   selector: 'dt-example-table-selectable-column',
-  templateUrl: './table-selectable-column-example.component.html',
-  styleUrls: ['./table-selectable-column-example.component.css'],
+  templateUrl: './table-selection-example.html',
+  styleUrls: ['./table-selection-example.css'],
 })
-export class DtExampleTableSelectableColumnComponent implements AfterViewInit {
+export class DtExampleTableSelection implements AfterViewInit {
   data: Row[] = [
     {
       host: 'et-demo-2-win4',

@@ -49,7 +49,6 @@ export class DevApp implements AfterContentInit, OnDestroy {
     { name: 'Card', route: '/card' },
     { name: 'Chart', route: '/chart' },
     { name: 'Checkbox', route: '/checkbox' },
-    { name: 'Checkbox Table', route: '/checkboxtable' },
     { name: 'Confirmation-dialog', route: '/confirmation-dialog' },
     { name: 'Consumption', route: '/consumption' },
     {

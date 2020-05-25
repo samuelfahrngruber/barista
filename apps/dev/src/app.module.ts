@@ -38,7 +38,6 @@ import { ButtonDemo } from './button/button-demo.component';
 import { CardDemo } from './card/card-demo.component';
 import { ChartDemo } from './chart/chart-demo.component';
 import { CheckboxDemo } from './checkbox/checkbox-demo.component';
-import { CheckboxTableDemo } from './checkbox-table/table-demo.component';
 import { ConfirmationDialogDemo } from './confirmation-dialog/confirmation-dialog-demo.component';
 import { ConsumptionDemo } from './consumption/consumption-demo.component';
 import { ContainerBreakpointObserverDemo } from './container-breakpoint-observer/container-breakpoint-observer-demo.component';
@@ -122,7 +121,6 @@ export class NoopRouteComponent {}
     CardDemo,
     ChartDemo,
     CheckboxDemo,
-    CheckboxTableDemo,
     ConfirmationDialogDemo,
     ContextDialogDemo,
     CopyToClipboardDemo,
