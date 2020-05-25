@@ -16,21 +16,36 @@
 
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { DtCheckboxColumn } from './checkbox-column';
 import { Component } from '@angular/core';
+import { DtTableModule } from '@dynatrace/barista-components/table';
+import { CommonModule } from '@angular/common';
+import { DtIconModule } from '@dynatrace/barista-components/icon';
+import { DtLoadingDistractorModule } from '@dynatrace/barista-components/loading-distractor';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { DtFormattersModule } from '@dynatrace/barista-components/formatters';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-describe('DtSelectableColumnComponent', () => {
-  let component: DtSelectableColumnForTestingComponent;
-  let fixture: ComponentFixture<DtSelectableColumnForTestingComponent>;
+describe('DtCheckboxColumn', () => {
+  let component: DtCheckboxColumnComponentForTesting;
+  let fixture: ComponentFixture<DtCheckboxColumnComponentForTesting>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [DtCheckboxColumn],
+      imports: [
+        CommonModule,
+        DtTableModule,
+        DtIconModule.forRoot({ svgIconLocation: `{{name}}.svg` }),
+        DtLoadingDistractorModule,
+        NoopAnimationsModule,
+        DtFormattersModule,
+        HttpClientTestingModule,
+      ],
+      declarations: [DtCheckboxColumnComponentForTesting],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DtSelectableColumnForTestingComponent);
+    fixture = TestBed.createComponent(DtCheckboxColumnComponentForTesting);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -43,13 +58,13 @@ describe('DtSelectableColumnComponent', () => {
 @Component({
   selector: 'dt-test-table-selectable-column',
   template:
-    '<dt-table [dataSource]="dataSource">' +
-    '<dt-selectable-column name="select"></dt-selectable-column>' +
+    '<dt-table [dataSource]="dataSource" dtSort>' +
+    '<dt-checkbox-column name="select"></dt-checkbox-column>' +
     '<dt-simple-text-column name="host"></dt-simple-text-column>' +
     "<dt-header-row *dtHeaderRowDef=\"['select', 'host']\"></dt-header-row>" +
     "<dt-row *dtRowDef=\"let row; columns: ['select', 'host']\"></dt-row> </dt-table>",
 })
-class DtSelectableColumnForTestingComponent {
+class DtCheckboxColumnComponentForTesting {
   dataSource = [
     { host: 'host1' },
     { host: 'host2' },
