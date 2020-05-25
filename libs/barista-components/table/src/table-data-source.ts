@@ -40,7 +40,7 @@ import { DtTable } from './table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { DtSelection } from './selection/selection';
 import { isNil } from 'lodash-es';
-import { DtCheckboxColumnDisplayAccessor } from './simple-columns/selectable-column.component';
+import { DtCheckboxColumnDisplayAccessor } from './simple-columns/checkbox-column';
 
 export type DtSortAccessorFunction<T> = (data: T) => any; // tslint:disable-line:no-any
 
@@ -229,7 +229,9 @@ export class DtTableDataSource<T> extends DataSource<T> {
         };
       };
       this._selectionChangeSubscription = this._selection.selectionChange.subscribe(
-        (event) => this._selectData(this.filteredData, event),
+        (event) => {
+          this._selectData(this.filteredData, event);
+        },
       );
     } else {
       this._selectionChangeSubscription = Subscription.EMPTY;
@@ -406,9 +408,9 @@ export class DtTableDataSource<T> extends DataSource<T> {
     return this.sortData(data.slice(), this.sort);
   }
 
-  _selectData(data: T[], row: T | null): T[] {
+  _selectData(data: T[], row: T | null): void {
     if (isNil(this._selection)) {
-      return data;
+      return;
     }
     const selectableData = this._getSelectableData(data);
     if (isNil(row)) {
@@ -422,16 +424,22 @@ export class DtTableDataSource<T> extends DataSource<T> {
     } else if (this._isSelectable(row)) {
       this.selectionModel.toggle(row);
     }
-    this._selection.anySelected =
-      this.selectionModel.selected.length !== selectableData.length &&
-      this.selectionModel.selected.length > 0;
+    this._updateGlobalSelectionStates(selectableData);
+  }
+
+  private _updateGlobalSelectionStates(selectableData: T[]): void {
+    if (isNil(this._selection)) {
+      return;
+    }
     this._selection.allSelected =
       (this.selectionModel.selected.length === selectableData.length ||
         (this._selection.selectionLimit !== undefined &&
           this.selectionModel.selected.length >=
             this._selection.selectionLimit)) &&
       this.selectionModel.selected.length > 0;
-    return data;
+    this._selection.anySelected =
+      this.selectionModel.selected.length !== selectableData.length &&
+      this.selectionModel.selected.length > 0;
   }
 
   private _isSelectable = (data: T) => {
@@ -537,6 +545,7 @@ export class DtTableDataSource<T> extends DataSource<T> {
   disconnect(): void {
     this._renderChangesSubscription.unsubscribe();
     this._searchChangeSubscription.unsubscribe();
+    this._selectionChangeSubscription.unsubscribe();
 
     this._destroy$.next();
     this._destroy$.complete();

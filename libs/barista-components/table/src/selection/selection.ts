@@ -23,7 +23,7 @@ import {
   Output,
   Predicate,
 } from '@angular/core';
-import { DtSelectableColumn } from '../simple-columns/selectable-column.component';
+import { DtSelectableColumn } from '../simple-columns/checkbox-column';
 import { isNil } from 'lodash-es';
 import { takeUntil, tap } from 'rxjs/operators';
 import { BehaviorSubject, Subject } from 'rxjs';

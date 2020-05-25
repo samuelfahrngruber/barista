@@ -56,7 +56,7 @@ import { DtTableLoadingState } from './states/index';
 import { DtOrder } from './order/order-directive';
 import { DtOrderCell } from './order/order-cell';
 import { DtTable } from './table';
-import { DtCheckboxColumn } from './simple-columns/selectable-column.component';
+import { DtCheckboxColumn } from './simple-columns/checkbox-column';
 import { DtSelection } from './selection/selection';
 
 const EXPORTED_DECLARATIONS = [
