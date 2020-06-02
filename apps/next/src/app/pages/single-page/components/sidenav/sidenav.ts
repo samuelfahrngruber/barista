@@ -24,7 +24,11 @@ import { Component, Input } from '@angular/core';
     class: 'next-sidenav',
   },
 })
-export class BaSidenav {
+export class DsSidenav {
   /** all sidenav items */
-  @Input() sidenavData;
+  @Input()
+  set sidenavData(sidenavData) {
+    this._sections = sidenavData.sections;
+  }
+  _sections;
 }

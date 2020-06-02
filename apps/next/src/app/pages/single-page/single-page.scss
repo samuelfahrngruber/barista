@@ -1,3 +1,9 @@
+@import '../../styles/page';
+
 :host {
   display: block;
+}
+
+.next-page-main {
+  grid-area: main;
 }

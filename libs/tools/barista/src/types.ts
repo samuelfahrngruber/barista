@@ -119,6 +119,7 @@ export interface BaStrapiPage extends BaStrapiBase {
   category: BaStrapiCategory | null;
   draft: boolean | null;
   toc: boolean | null;
+  group: string | null;
 }
 
 /** Strapi UX DecisionGraph Node */
@@ -149,4 +150,18 @@ export enum NextContentType {
 
 export interface NextStrapiPage extends BaStrapiPage {
   group: string;
+}
+
+export interface DsSideNavContent {
+  sections: DsSideNavSection[];
+}
+
+export interface DsSideNavSection {
+  title?: string;
+  items: DsSideNavSectionItem[];
+}
+
+export interface DsSideNavSectionItem {
+  title: string;
+  link: string;
 }
