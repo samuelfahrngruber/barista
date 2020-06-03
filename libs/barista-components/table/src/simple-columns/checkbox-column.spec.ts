@@ -16,7 +16,7 @@
 
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, ContentChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { DtTableModule } from '@dynatrace/barista-components/table';
 import { CommonModule } from '@angular/common';
 import { DtIconModule } from '@dynatrace/barista-components/icon';
@@ -25,13 +25,15 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { DtFormattersModule } from '@dynatrace/barista-components/formatters';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { By } from '@angular/platform-browser';
-import { DtCheckbox } from '@dynatrace/barista-components/checkbox';
+import {
+  DtCheckbox,
+  DtCheckboxChange,
+} from '@dynatrace/barista-components/checkbox';
 import {
   DtCheckboxColumn,
   DtCheckboxColumnDisplayAccessor,
 } from './checkbox-column';
 import { isNil } from 'lodash-es';
-import { dispatchMouseEvent } from '@dynatrace/testing/browser';
 
 describe('DtCheckboxColumn', () => {
   let component: DtCheckboxColumnComponentForTesting;
@@ -107,15 +109,13 @@ describe('DtCheckboxColumn', () => {
 
   it('should toggle the checkbox', () => {
     const checkbox = fixture.debugElement.query(By.css('dt-row dt-checkbox'));
-    fixture.detectChanges();
 
     const defaultRow: DtCheckbox<any> = checkbox.componentInstance;
     expect(defaultRow.checked).toBe(false);
     expect(defaultRow.indeterminate).toBe(false);
     expect(defaultRow.disabled).toBe(false);
 
-    // checkbox.nativeElement.click();
-    dispatchMouseEvent(checkbox.nativeElement, 'click');
+    defaultRow._onInputClick(new Event('click'));
     fixture.detectChanges();
 
     const updatedCheckbox = fixture.debugElement.query(
@@ -126,8 +126,72 @@ describe('DtCheckboxColumn', () => {
     expect(updatedRow.indeterminate).toBe(false);
     expect(updatedRow.disabled).toBe(false);
 
-    dispatchMouseEvent(updatedCheckbox.nativeElement, 'click');
+    updatedRow._onInputClick(new Event('click'));
     fixture.detectChanges();
+
+    const deselectedRow: DtCheckbox<any> = fixture.debugElement.query(
+      By.css('dt-row dt-checkbox'),
+    ).componentInstance;
+    expect(deselectedRow.checked).toBe(false);
+    expect(deselectedRow.indeterminate).toBe(false);
+    expect(deselectedRow.disabled).toBe(false);
+  });
+
+  it('should toggle all rows', () => {
+    const headerCheckbox: DtCheckbox<any> = fixture.debugElement.query(
+      By.css('dt-header-row dt-checkbox'),
+    ).componentInstance;
+
+    expect(headerCheckbox.checked).toBe(false);
+    expect(headerCheckbox.indeterminate).toBe(false);
+    expect(headerCheckbox.disabled).toBe(false);
+
+    headerCheckbox._onInputClick(new Event('click'));
+    fixture.detectChanges();
+
+    expect(headerCheckbox.checked).toBe(true);
+    expect(headerCheckbox.indeterminate).toBe(false);
+    expect(headerCheckbox.disabled).toBe(false);
+    let rows = fixture.debugElement.queryAll(By.css('dt-row dt-checkbox'));
+    rows.forEach((row) => {
+      const checkbox: DtCheckbox<any> = row.componentInstance;
+      expect(checkbox.checked).toBe(true);
+    });
+
+    headerCheckbox._onInputClick(new Event('click'));
+    fixture.detectChanges();
+    expect(headerCheckbox.checked).toBe(false);
+    expect(headerCheckbox.indeterminate).toBe(false);
+    expect(headerCheckbox.disabled).toBe(false);
+    rows = fixture.debugElement.queryAll(By.css('dt-row dt-checkbox'));
+    rows.forEach((row) => {
+      const checkbox: DtCheckbox<any> = row.componentInstance;
+      expect(checkbox.checked).toBe(false);
+    });
+  });
+
+  it('should show the header checkbox in the correct state', () => {
+    const headerCheckbox: DtCheckbox<any> = fixture.debugElement.query(
+      By.css('dt-header-row dt-checkbox'),
+    ).componentInstance;
+
+    expect(headerCheckbox.checked).toBe(false);
+    expect(headerCheckbox.indeterminate).toBe(false);
+    expect(headerCheckbox.disabled).toBe(false);
+
+    component.checkboxColumn.anySelected = true;
+    fixture.detectChanges();
+
+    expect(headerCheckbox.checked).toBe(false);
+    expect(headerCheckbox.indeterminate).toBe(true);
+    expect(headerCheckbox.disabled).toBe(false);
+
+    component.checkboxColumn.allSelected = true;
+    fixture.detectChanges();
+
+    expect(headerCheckbox.checked).toBe(true);
+    expect(headerCheckbox.indeterminate).toBe(false);
+    expect(headerCheckbox.disabled).toBe(false);
   });
 });
 
@@ -182,19 +246,50 @@ describe('DtCheckboxColumnWithDisplayAccessor', () => {
     expect(checkedRow.indeterminate).toBe(false);
     expect(checkedRow.disabled).toBe(false);
   });
+
+  it('should use fallback values if display accessor does not specify specific values', () => {
+    fixture.componentInstance.checkboxColumn.displayAccessor = () => {
+      return {};
+    };
+    fixture.detectChanges();
+    const rowCheckboxes = fixture.debugElement.queryAll(
+      By.css('dt-row dt-checkbox'),
+    );
+
+    const defaultRow: DtCheckbox<any> = rowCheckboxes[0].componentInstance;
+    expect(defaultRow.checked).toBe(false);
+    expect(defaultRow.indeterminate).toBe(false);
+    expect(defaultRow.disabled).toBe(false);
+
+    const indeterminateRow: DtCheckbox<any> =
+      rowCheckboxes[1].componentInstance;
+    expect(indeterminateRow.checked).toBe(false);
+    expect(indeterminateRow.indeterminate).toBe(false);
+    expect(indeterminateRow.disabled).toBe(false);
+
+    const disabledRow: DtCheckbox<any> = rowCheckboxes[2].componentInstance;
+    expect(disabledRow.checked).toBe(false);
+    expect(disabledRow.indeterminate).toBe(false);
+    expect(disabledRow.disabled).toBe(false);
+
+    const checkedRow: DtCheckbox<any> = rowCheckboxes[3].componentInstance;
+    expect(checkedRow.checked).toBe(false);
+    expect(checkedRow.indeterminate).toBe(false);
+    expect(checkedRow.disabled).toBe(false);
+  });
 });
 
 @Component({
   selector: 'dt-test-table-selectable-column',
   template:
     '<dt-table [dataSource]="dataSource" dtSort>' +
-    '<dt-checkbox-column name="select" (selectionToggled)="toggleRow($event)"></dt-checkbox-column>' +
+    '<dt-checkbox-column name="select" (selectionToggled)="toggleRow($event)" (checkboxHeaderChanged)="toggleAll($event)"></dt-checkbox-column>' +
     '<dt-simple-text-column name="host"></dt-simple-text-column>' +
     "<dt-header-row *dtHeaderRowDef=\"['select', 'host']\"></dt-header-row>" +
     "<dt-row *dtRowDef=\"let row; columns: ['select', 'host']\"></dt-row> </dt-table>",
 })
 class DtCheckboxColumnComponentForTesting {
-  @ContentChild(DtCheckboxColumn, { static: true, read: DtCheckboxColumn })
+  @ViewChild(DtCheckboxColumn, { static: true, read: DtCheckboxColumn })
   checkboxColumn: DtCheckboxColumn<any>;
 
   dataSource = [
@@ -221,8 +316,25 @@ class DtCheckboxColumnComponentForTesting {
 
   toggleRow(row: any): void {
     if (!isNil(row)) {
-      row.select.checked = true;
+      this.toggleSingleRow(row);
     }
+  }
+
+  toggleAll(event: DtCheckboxChange<any>): void {
+    this.dataSource.forEach((row) => {
+      row.select = {
+        checked: event.checked,
+      };
+    });
+  }
+
+  toggleSingleRow(row: any): void {
+    if (isNil(row.select)) {
+      row.select = {
+        checked: false,
+      };
+    }
+    row.select.checked = !row.select.checked;
   }
 }
 
@@ -240,6 +352,9 @@ interface Row {
     "<dt-row *dtRowDef=\"let row; columns: ['select', 'host']\"></dt-row> </dt-table>",
 })
 class DtCheckboxColumnComponentForTestingWithDisplayAccessor {
+  @ViewChild(DtCheckboxColumn, { static: true, read: DtCheckboxColumn })
+  checkboxColumn: DtCheckboxColumn<any>;
+
   dataSource: Row[] = [
     {
       host: 'host1',
