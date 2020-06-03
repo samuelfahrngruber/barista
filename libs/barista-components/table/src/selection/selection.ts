@@ -20,6 +20,7 @@ import {
   EventEmitter,
   Input,
   OnDestroy,
+  Optional,
   Output,
   Predicate,
 } from '@angular/core';
@@ -30,13 +31,9 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import {
   DtSimpleColumnBase,
   DtSimpleColumnDisplayAccessorFunction,
-} from '../simple-columns';
+} from '../simple-columns/simple-column-base';
 
-export interface DtSelectionChangeEvent<T> {
-  toggledRow: T | null;
-}
-
-/** Container for DtSortHeaders to manage the sort state and provide default sort parameters. */
+/** Directive for managing selection changes of a DtSelectableColumn. */
 @Directive({
   selector: '[dtSelection]',
   exportAs: 'dtSelection',
@@ -56,7 +53,7 @@ export class DtSelection<T> implements AfterViewInit, OnDestroy {
   /** @internal Initialized subject that fires on initialization and completes on destroy. */
   readonly _initialized = new BehaviorSubject<boolean>(false);
 
-  constructor(_column: DtSimpleColumnBase<T>) {
+  constructor(@Optional() _column: DtSimpleColumnBase<T>) {
     this._selectableColumn = (_column as unknown) as DtSelectableColumn<T>;
     if (!isNil(this._selectableColumn)) {
       this._selectableColumn.selectionToggled

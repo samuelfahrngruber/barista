@@ -415,9 +415,7 @@ export class DtTableDataSource<T> extends DataSource<T> {
     const selectableData = this._getSelectableData(data);
     if (isNil(row)) {
       if (this.selectionModel.selected.length !== selectableData.length) {
-        this.selectionModel.select(
-          ...selectableData.slice(0, this._selection?.selectionLimit),
-        );
+        this.selectionModel.select(...this._getAllSelection(selectableData));
       } else {
         this.selectionModel.clear();
       }
@@ -425,6 +423,19 @@ export class DtTableDataSource<T> extends DataSource<T> {
       this.selectionModel.toggle(row);
     }
     this._updateGlobalSelectionStates(selectableData);
+  }
+
+  private _getAllSelection(selectableData: T[]): T[] {
+    const limit = this.selection?.selectionLimit;
+    if (limit) {
+      const currentSelection = this.selectionModel.selected;
+      const addSelection = selectableData
+        .filter((entry) => !currentSelection.includes(entry))
+        .slice(0, limit - currentSelection.length);
+      return addSelection.concat(currentSelection);
+    } else {
+      return selectableData;
+    }
   }
 
   private _updateGlobalSelectionStates(selectableData: T[]): void {
