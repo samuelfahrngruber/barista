@@ -18,13 +18,13 @@
 // tslint:disable no-any max-file-line-count no-unbound-method use-component-selector
 
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import {
-  ComponentFixture,
-  TestBed,
   async,
+  ComponentFixture,
   fakeAsync,
   flush,
+  TestBed,
 } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -35,6 +35,7 @@ import {
   DtPaginationModule,
 } from '@dynatrace/barista-components/pagination';
 import {
+  DtSelection,
   DtSimpleColumnComparatorFunction,
   DtSort,
   DtTableDataSource,
@@ -44,6 +45,10 @@ import {
   createComponent,
   dispatchMouseEvent,
 } from '@dynatrace/testing/browser';
+import { DtCheckbox } from '@dynatrace/barista-components/checkbox';
+import { CommonModule } from '@angular/common';
+import { DtLoadingDistractorModule } from '@dynatrace/barista-components/loading-distractor';
+import { DtFormattersModule } from '@dynatrace/barista-components/formatters';
 
 const PAGE_SIZE = 2;
 
@@ -110,13 +115,20 @@ describe('DtTableDataSource', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
+        CommonModule,
         DtTableModule,
+        DtIconModule.forRoot({ svgIconLocation: `{{name}}.svg` }),
+        DtLoadingDistractorModule,
         NoopAnimationsModule,
+        DtFormattersModule,
         HttpClientTestingModule,
         DtPaginationModule,
-        DtIconModule.forRoot({ svgIconLocation: `{{name}}.svg` }),
       ],
-      declarations: [PaginationTestApp, TableSortingMixedTestApp],
+      declarations: [
+        PaginationTestApp,
+        TableSortingMixedTestApp,
+        TableSelectionTestApp,
+      ],
     }).compileComponents();
   }));
 
@@ -243,6 +255,174 @@ describe('DtTableDataSource', () => {
       );
       expect(paginationItems).toHaveLength(4);
     }));
+  });
+
+  describe('selection', () => {
+    let fixture: ComponentFixture<TableSelectionTestApp>;
+    let component: TableSelectionTestApp;
+    let dataSource: DtTableDataSource<HostRow>;
+    let selection: DtSelection<HostRow>;
+
+    beforeEach(async(() => {
+      console.log('before');
+      fixture = createComponent(TableSelectionTestApp);
+      component = fixture.componentInstance;
+      expect(component).toBeTruthy();
+      dataSource = component.dataSource;
+      expect(dataSource).toBeTruthy();
+      selection = component.selectable;
+      expect(selection).toBeTruthy();
+    }));
+
+    it('should do nothing', () => {
+      expect(component).toBeTruthy();
+    });
+
+    it('should select a row after clicking the checkbox', () => {
+      console.log('here');
+      expect(component).toBeTruthy();
+      const rowCheckboxes = fixture.debugElement.queryAll(
+        By.css('dt-row dt-checkbox'),
+      );
+      const headerCheckbox: DtCheckbox<HostRow> = fixture.debugElement.query(
+        By.css('dt-header-row dt-checkbox'),
+      ).componentInstance;
+      const firstCheckbox: DtCheckbox<HostRow> =
+        rowCheckboxes[0].componentInstance;
+
+      firstCheckbox._onInputClick(new Event('click'));
+      fixture.detectChanges();
+      const selectedRow = firstCheckbox.value;
+
+      expect(dataSource.selectionModel.selected.length).toBe(1);
+      expect(dataSource.selectionModel.selected[0]).toBe(selectedRow);
+      expect(headerCheckbox.indeterminate).toBe(true);
+      expect(headerCheckbox.checked).toBe(false);
+      expect(headerCheckbox.disabled).toBe(false);
+      console.log('there');
+    });
+
+    it('should disable none selectable checkboxes', () => {
+      fixture.detectChanges();
+      const rowCheckboxes: DtCheckbox<
+        HostRow
+      >[] = fixture.debugElement
+        .queryAll(By.css('dt-row dt-checkbox'))
+        .map((comp) => comp.componentInstance);
+
+      expect(rowCheckboxes.length).toBe(4);
+
+      expect(rowCheckboxes[0].indeterminate).toBe(false);
+      expect(rowCheckboxes[0].checked).toBe(false);
+      expect(rowCheckboxes[0].disabled).toBe(false);
+
+      expect(rowCheckboxes[1].indeterminate).toBe(false);
+      expect(rowCheckboxes[1].checked).toBe(false);
+      expect(rowCheckboxes[1].disabled).toBe(false);
+
+      expect(rowCheckboxes[2].indeterminate).toBe(false);
+      expect(rowCheckboxes[2].checked).toBe(false);
+      expect(rowCheckboxes[2].disabled).toBe(false);
+
+      expect(rowCheckboxes[3].indeterminate).toBe(false);
+      expect(rowCheckboxes[3].checked).toBe(false);
+      expect(rowCheckboxes[3].disabled).toBe(true);
+    });
+
+    it('should select all selectable rows limited by the selection limit when the header checkbox is clicked', () => {
+      const headerCheckbox: DtCheckbox<HostRow> = fixture.debugElement.query(
+        By.css('dt-header-row dt-checkbox'),
+      ).componentInstance;
+      headerCheckbox._onInputClick(new Event('click'));
+      fixture.detectChanges();
+      expect(dataSource.selectionModel.selected.length).toBe(
+        selection.selectionLimit,
+      );
+      const rowCheckboxes: DtCheckbox<
+        HostRow
+      >[] = fixture.debugElement
+        .queryAll(By.css('dt-row dt-checkbox'))
+        .map((comp) => comp.componentInstance);
+      expect(headerCheckbox.checked).toBe(true);
+      expect(headerCheckbox.disabled).toBe(false);
+      expect(headerCheckbox.indeterminate).toBe(false);
+
+      expect(rowCheckboxes[0].indeterminate).toBe(false);
+      expect(rowCheckboxes[0].checked).toBe(true);
+      expect(rowCheckboxes[0].disabled).toBe(false);
+
+      expect(rowCheckboxes[1].indeterminate).toBe(false);
+      expect(rowCheckboxes[1].checked).toBe(true);
+      expect(rowCheckboxes[1].disabled).toBe(false);
+
+      expect(rowCheckboxes[2].indeterminate).toBe(false);
+      expect(rowCheckboxes[2].checked).toBe(false);
+      expect(rowCheckboxes[2].disabled).toBe(true);
+
+      expect(rowCheckboxes[3].indeterminate).toBe(false);
+      expect(rowCheckboxes[3].checked).toBe(false);
+      expect(rowCheckboxes[3].disabled).toBe(true);
+    });
+
+    it('should deselect all rows if header checkbox is clicked when every row is selected', () => {
+      dataSource.selectionModel.select(dataSource.data[0], dataSource.data[1]);
+      fixture.detectChanges();
+
+      const headerCheckbox: DtCheckbox<HostRow> = fixture.debugElement.query(
+        By.css('dt-header-row dt-checkbox'),
+      ).componentInstance;
+      headerCheckbox._onInputClick(new Event('click'));
+      fixture.detectChanges();
+      const rowCheckboxes: DtCheckbox<
+        HostRow
+      >[] = fixture.debugElement
+        .queryAll(By.css('dt-row dt-checkbox'))
+        .map((comp) => comp.componentInstance);
+
+      expect(dataSource.selectionModel.selected.length).toBe(0);
+
+      expect(headerCheckbox.checked).toBe(false);
+      expect(headerCheckbox.indeterminate).toBe(false);
+      expect(headerCheckbox.disabled).toBe(false);
+
+      expect(rowCheckboxes[0].indeterminate).toBe(false);
+      expect(rowCheckboxes[0].checked).toBe(false);
+      expect(rowCheckboxes[0].disabled).toBe(false);
+
+      expect(rowCheckboxes[1].indeterminate).toBe(false);
+      expect(rowCheckboxes[1].checked).toBe(false);
+      expect(rowCheckboxes[1].disabled).toBe(false);
+
+      expect(rowCheckboxes[2].indeterminate).toBe(false);
+      expect(rowCheckboxes[2].checked).toBe(false);
+      expect(rowCheckboxes[2].disabled).toBe(false);
+
+      expect(rowCheckboxes[3].indeterminate).toBe(false);
+      expect(rowCheckboxes[3].checked).toBe(false);
+      expect(rowCheckboxes[3].disabled).toBe(true);
+    });
+
+    it('should include already selected rows when selecting all rows and applying the selection limit', () => {
+      dataSource.selectionModel.select(dataSource.data[2]);
+      fixture.detectChanges();
+
+      const headerCheckbox: DtCheckbox<HostRow> = fixture.debugElement.query(
+        By.css('dt-header-row dt-checkbox'),
+      ).componentInstance;
+      expect(headerCheckbox.indeterminate).toBe(true);
+      expect(headerCheckbox.checked).toBe(false);
+      expect(headerCheckbox.disabled).toBe(false);
+      headerCheckbox._onInputClick(new Event('click'));
+      fixture.detectChanges();
+
+      expect(dataSource.selectionModel.selected.length).toBe(
+        selection.selectionLimit,
+      );
+      const row1 = dataSource.data[0];
+      const row2 = dataSource.data[2];
+      expect(dataSource.selectionModel.selected[0]).toBe(row2);
+      expect(dataSource.selectionModel.selected[1]).toBe(row1);
+    });
   });
 
   describe('sorting', () => {
@@ -498,5 +678,88 @@ export class TableSortingMixedTestApp implements OnInit {
   ngOnInit(): void {
     // Set the dtSort reference on the dataSource, so it can react to sorting.
     this.dataSource.sort = this.sortable;
+  }
+}
+
+type HostRow = { host: string; memoryPerc: number; memoryTotal: number };
+
+@Component({
+  selector: 'test-table-selection-component',
+  // tslint:disable
+  template: `
+    <dt-table [dataSource]="dataSource">
+      <dt-checkbox-column
+        dtSelection
+        #selectable
+        [selectionLimit]="2"
+        [selectable]="isSelectable"
+        name="select"
+      >
+      </dt-checkbox-column>
+      <dt-simple-text-column
+        name="host"
+        label="Host"
+        sortable="false"
+      ></dt-simple-text-column>
+
+      <ng-container dtColumnDef="memory" dtColumnAlign="number">
+        <dt-header-cell *dtHeaderCellDef>Memory</dt-header-cell>
+        <dt-cell *dtCellDef="let row">
+          {{ row.memoryPerc }} / {{ row.memoryTotal }}
+        </dt-cell>
+      </ng-container>
+
+      <dt-header-row
+        *dtHeaderRowDef="['select', 'host', 'memory']"
+      ></dt-header-row>
+      <dt-row
+        *dtRowDef="let row; columns: ['select', 'host', 'memory']"
+      ></dt-row>
+    </dt-table>
+  `,
+  // tslint:enable
+})
+export class TableSelectionTestApp implements AfterViewInit {
+  data: Array<HostRow> = [
+    {
+      host: 'et-demo-2-win4',
+      memoryPerc: 38,
+      memoryTotal: 5830000000,
+    },
+    {
+      host: 'et-demo-2-win3',
+      memoryPerc: 46,
+      memoryTotal: 6000000000,
+    },
+    {
+      host: 'docker-host2',
+      memoryPerc: 35,
+      memoryTotal: 5810000000,
+    },
+    {
+      host: 'et-demo-2-win1',
+      memoryPerc: 7.86,
+      memoryTotal: 5820000000,
+    },
+  ];
+
+  @ViewChild('selectable', { read: DtSelection, static: true })
+  selectable: DtSelection<HostRow>;
+
+  dataSource: DtTableDataSource<HostRow>;
+
+  constructor() {
+    this.dataSource = new DtTableDataSource(this.data);
+  }
+
+  ngAfterViewInit(): void {
+    // Set the dtSelection reference on the dataSource, so it can react to selection.
+    this.dataSource.selection = this.selectable;
+  }
+
+  isSelectable(row: HostRow): boolean {
+    const sel = row.memoryPerc > 10;
+    console.log('Selectable: ' + sel);
+    return sel;
   }
 }

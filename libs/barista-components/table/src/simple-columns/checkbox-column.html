@@ -6,6 +6,7 @@
         (change)="_toggleAllSelection($event)"
         [checked]="allSelected"
         [indeterminate]="_anySelected$ | async"
+        [aria-label]="ariaLabelProvider(undefined)"
       ></dt-checkbox>
       {{ label }}
     </dt-header-cell>
@@ -13,10 +14,12 @@
 
   <dt-cell *dtCellDef="let row" class="dt-selectable-column">
     <dt-checkbox
-      [disabled]="_isDisabled(row)"
-      [checked]="_isChecked(row)"
-      [indeterminate]="_isIndeterminate(row)"
+      [value]="row"
+      [disabled]="_isDisabled(row) | async"
+      [indeterminate]="_isIndeterminate(row) | async"
+      [checked]="_isChecked(row) | async"
       (change)="_toggleRow($event, row)"
+      [aria-label]="ariaLabelProvider(row)"
     ></dt-checkbox>
   </dt-cell>
 </ng-container>

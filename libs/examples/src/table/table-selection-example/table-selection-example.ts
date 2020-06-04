@@ -21,6 +21,7 @@ import {
   DtSort,
   DtTableDataSource,
 } from '@dynatrace/barista-components/table';
+import { isNil } from 'lodash-es';
 
 interface Row {
   host: string;
@@ -97,5 +98,12 @@ export class DtExampleTableSelection implements AfterViewInit {
 
   isSelectable(entry: { host: string; cpu: number }): boolean {
     return !entry.host.endsWith('(disabled)');
+  }
+
+  getAriaLabel(value: Row | undefined): string {
+    if (isNil(value)) {
+      return 'Select hosts';
+    }
+    return 'Select ' + value.host;
   }
 }

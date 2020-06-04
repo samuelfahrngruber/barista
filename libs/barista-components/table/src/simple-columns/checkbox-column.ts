@@ -29,7 +29,9 @@ import {
   DtSimpleColumnDisplayAccessorFunction,
 } from '../simple-columns';
 import { DtCheckboxChange } from '@dynatrace/barista-components/checkbox';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { isNil } from 'lodash-es';
+import { finalize } from 'rxjs/operators';
 
 export interface DtCheckboxColumnDisplayAccessor {
   disabled?: boolean;
@@ -67,7 +69,23 @@ export class DtCheckboxColumn<T> extends DtSimpleColumnBase<T>
 
   private _anySelected = false;
 
+  private _checked$: Map<T, BehaviorSubject<boolean>> = new Map<
+    T,
+    BehaviorSubject<boolean>
+  >();
+  private _disabled$: Map<T, BehaviorSubject<boolean>> = new Map<
+    T,
+    BehaviorSubject<boolean>
+  >();
+  private _indeterminate$: Map<T, BehaviorSubject<boolean>> = new Map<
+    T,
+    BehaviorSubject<boolean>
+  >();
+
   _anySelected$ = new BehaviorSubject<boolean>(false);
+
+  @Input()
+  ariaLabelProvider: (value: T | undefined) => string = () => this.label;
 
   @Input()
   set anySelected(value: boolean) {
@@ -90,41 +108,53 @@ export class DtCheckboxColumn<T> extends DtSimpleColumnBase<T>
     super(table);
   }
 
-  _isDisabled(value: T): boolean {
-    if (this.displayAccessor) {
-      return this.displayAccessor(value, this.name).disabled ?? false;
-    }
-    const accessor = ((value as unknown) as DtCheckboxColumnDisplayAccessor)[
-      this.name
-    ];
-    if (accessor) {
-      return accessor.disabled ?? false;
-    }
-    return false;
+  _isDisabled(value: T): Observable<boolean> {
+    return this._updateValue(value, this._disabled$, (acc) => acc.disabled);
   }
 
-  _isChecked(value: T): boolean {
-    if (this.displayAccessor) {
-      return this.displayAccessor(value, this.name).checked ?? false;
-    }
-    const accessor = ((value as unknown) as DtCheckboxColumnDisplayAccessor)[
-      this.name
-    ];
-    if (accessor) {
-      return accessor.checked ?? false;
-    }
-    return false;
+  _isChecked(value: T): Observable<boolean> {
+    return this._updateValue(value, this._checked$, (acc) => acc.checked);
   }
 
-  _isIndeterminate(value: T): boolean {
-    if (this.displayAccessor) {
-      return this.displayAccessor(value, this.name).indeterminate ?? false;
+  _isIndeterminate(value: T): Observable<boolean> {
+    return this._updateValue(
+      value,
+      this._indeterminate$,
+      (acc) => acc.indeterminate,
+    );
+  }
+
+  private _updateValue(
+    value: T,
+    map: Map<T, Subject<boolean>>,
+    acc: (val: DtCheckboxColumnDisplayAccessor) => boolean | undefined,
+  ): Observable<boolean> {
+    let obs =
+      map.get(value) ??
+      new BehaviorSubject(this._getStateFromAccessor(value, acc));
+    if (!map.has(value)) {
+      obs.pipe(finalize(() => map.delete(value)));
+      map.set(value, obs);
+    } else {
+      obs.next(this._getStateFromAccessor(value, acc));
+    }
+    return obs;
+  }
+
+  private _getStateFromAccessor(
+    value: T,
+    accessorValue: (
+      param: DtCheckboxColumnDisplayAccessor,
+    ) => boolean | undefined,
+  ): boolean {
+    if (!isNil(this.displayAccessor)) {
+      return accessorValue(this.displayAccessor(value, name)) ?? false;
     }
     const accessor = ((value as unknown) as DtCheckboxColumnDisplayAccessor)[
       this.name
     ];
-    if (accessor) {
-      return accessor.indeterminate ?? false;
+    if (!isNil(accessor)) {
+      return accessorValue(accessor) ?? false;
     }
     return false;
   }

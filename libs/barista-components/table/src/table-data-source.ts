@@ -233,13 +233,20 @@ export class DtTableDataSource<T> extends DataSource<T> {
           this._selectData(this.filteredData, event);
         },
       );
+      this.selectionModel.changed
+        .pipe(takeUntil(this._destroy))
+        .subscribe(() =>
+          this._updateGlobalSelectionStates(
+            this._getSelectableData(this.filteredData),
+          ),
+        );
     } else {
       this._selectionChangeSubscription = Subscription.EMPTY;
     }
   }
 
   private _selection: DtSelection<T> | null = null;
-  selectionModel = new SelectionModel<T>(true, [], false);
+  selectionModel = new SelectionModel<T>(true, [], true);
 
   /**
    * Data accessor function that is used for accessing data properties for sorting through
@@ -422,7 +429,6 @@ export class DtTableDataSource<T> extends DataSource<T> {
     } else if (this._isSelectable(row)) {
       this.selectionModel.toggle(row);
     }
-    this._updateGlobalSelectionStates(selectableData);
   }
 
   private _getAllSelection(selectableData: T[]): T[] {

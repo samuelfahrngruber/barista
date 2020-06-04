@@ -25,7 +25,6 @@ import {
   Predicate,
 } from '@angular/core';
 import { DtSelectableColumn } from '../simple-columns/checkbox-column';
-import { isNil } from 'lodash-es';
 import { takeUntil, tap } from 'rxjs/operators';
 import { BehaviorSubject, Subject } from 'rxjs';
 import {
@@ -48,45 +47,35 @@ export class DtSelection<T> implements AfterViewInit, OnDestroy {
   @Input()
   selectable: Predicate<T> = () => true;
 
-  private _selectableColumn: DtSelectableColumn<T> | undefined;
+  private _selectableColumn: DtSelectableColumn<T>;
 
   /** @internal Initialized subject that fires on initialization and completes on destroy. */
   readonly _initialized = new BehaviorSubject<boolean>(false);
 
   constructor(@Optional() _column: DtSimpleColumnBase<T>) {
     this._selectableColumn = (_column as unknown) as DtSelectableColumn<T>;
-    if (!isNil(this._selectableColumn)) {
-      this._selectableColumn.selectionToggled
-        .pipe(
-          takeUntil(this._destroy),
-          tap((event: T | null) => {
-            this.selectionChange.emit(event);
-          }),
-        )
-        .subscribe();
-      this._updateDisplayAccessor();
-    }
+    this._selectableColumn.selectionToggled
+      .pipe(
+        takeUntil(this._destroy),
+        tap((event: T | null) => {
+          this.selectionChange.emit(event);
+        }),
+      )
+      .subscribe();
   }
 
-  private _displayAccessor:
-    | DtSimpleColumnDisplayAccessorFunction<T>
-    | undefined;
-
   set displayAccessor(accessor: DtSimpleColumnDisplayAccessorFunction<T>) {
-    this._displayAccessor = accessor;
-    this._updateDisplayAccessor();
+    setTimeout(() => {
+      this._selectableColumn.displayAccessor = accessor;
+    });
   }
 
   set allSelected(allSelected: boolean) {
-    if (!isNil(this._selectableColumn)) {
-      this._selectableColumn.allSelected = allSelected;
-    }
+    this._selectableColumn.allSelected = allSelected;
   }
 
   set anySelected(anySelected: boolean) {
-    if (!isNil(this._selectableColumn)) {
-      this._selectableColumn.anySelected = anySelected;
-    }
+    this._selectableColumn.anySelected = anySelected;
   }
 
   private _destroy = new Subject<void>();
@@ -98,11 +87,5 @@ export class DtSelection<T> implements AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this._destroy.complete();
     this._initialized.complete();
-  }
-
-  private _updateDisplayAccessor(): void {
-    if (!isNil(this._selectableColumn) && !isNil(this._displayAccessor)) {
-      this._selectableColumn.displayAccessor = this._displayAccessor;
-    }
   }
 }
