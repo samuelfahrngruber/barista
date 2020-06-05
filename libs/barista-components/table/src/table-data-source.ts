@@ -234,7 +234,7 @@ export class DtTableDataSource<T> extends DataSource<T> {
         },
       );
       this.selectionModel.changed
-        .pipe(takeUntil(this._destroy))
+        .pipe(takeUntil(this._destroy$))
         .subscribe(() =>
           this._updateGlobalSelectionStates(
             this._getSelectableData(this.filteredData),
