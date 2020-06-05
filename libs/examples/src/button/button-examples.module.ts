@@ -46,6 +46,5 @@ import { DtExampleButtonVariant } from './button-variant-example/button-variant-
     DtExampleButtonLoadingSpinner,
     DtExampleButtonVariant,
   ],
-  exports: [DtExampleButtonDefault],
 })
 export class DtButtonExamplesModule {}

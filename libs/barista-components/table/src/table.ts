@@ -35,7 +35,7 @@ import {
   ViewContainerRef,
   ViewEncapsulation,
 } from '@angular/core';
-import { BehaviorSubject, Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, BehaviorSubject } from 'rxjs';
 import { mapTo } from 'rxjs/operators';
 
 import { DtEmptyState } from '@dynatrace/barista-components/empty-state';
@@ -45,7 +45,7 @@ import {
   DtSimpleColumnComparatorFunction,
   DtSimpleColumnDisplayAccessorFunction,
   DtSimpleColumnSortAccessorFunction,
-} from './simple-columns';
+} from './simple-columns/simple-column-base';
 
 interface SimpleColumnsAccessorMaps<T> {
   displayAccessorMap: Map<string, DtSimpleColumnDisplayAccessorFunction<T>>;

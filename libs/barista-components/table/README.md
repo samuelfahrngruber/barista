@@ -362,6 +362,15 @@ a `DtShowMore` componenent might be more suitable.
 
 <ba-live-example name="DtExampleTableShowMore" fullwidth></ba-live-example>
 
+## Selectable table rows
+
+The 'DtCheckboxColumn' can be used the select rows of a table. The
+'DtTableDataSource' provides default selection handling out of the box. To set
+the selection handling you will have to connect the 'dtSelection' instance to
+the 'DtTableDataSource'.
+
+<ba-live-example name="DtExampleTableSelection" fullWidth></ba-live-example>
+
 ## Sorting, paging and filtering out of the box with DtTableDataSource
 
 Merging the streams for sorting, filtering and pagination can get quite tricky.

@@ -24,27 +24,20 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { DtTable } from '../table';
-import {
-  DtSimpleColumnBase,
-  DtSimpleColumnDisplayAccessorFunction,
-} from '../simple-columns';
+import { DtSimpleColumnBase } from '../simple-columns';
 import { DtCheckboxChange } from '@dynatrace/barista-components/checkbox';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { isNil } from 'lodash-es';
 import { finalize } from 'rxjs/operators';
+import {
+  DT_SELECTABLE_COLUMN_TOKEN,
+  DtSelectableColumn,
+} from '../selection/selection';
 
 export interface DtCheckboxColumnDisplayAccessor {
   disabled?: boolean;
   checked?: boolean;
   indeterminate?: boolean;
-}
-
-export interface DtSelectableColumn<T> {
-  selectionToggled: EventEmitter<T | null>;
-  name: string;
-  displayAccessor: DtSimpleColumnDisplayAccessorFunction<T>;
-  allSelected: boolean;
-  anySelected: boolean;
 }
 
 @Component({
@@ -54,7 +47,10 @@ export interface DtSelectableColumn<T> {
   preserveWhitespaces: false,
   encapsulation: ViewEncapsulation.Emulated,
   changeDetection: ChangeDetectionStrategy.Default,
-  providers: [{ provide: DtSimpleColumnBase, useExisting: DtCheckboxColumn }],
+  providers: [
+    { provide: DtSimpleColumnBase, useExisting: DtCheckboxColumn },
+    { provide: DT_SELECTABLE_COLUMN_TOKEN, useExisting: DtCheckboxColumn },
+  ],
 })
 export class DtCheckboxColumn<T> extends DtSimpleColumnBase<T>
   implements DtSelectableColumn<T> {

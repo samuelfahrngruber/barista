@@ -18,19 +18,25 @@ import {
   AfterViewInit,
   Directive,
   EventEmitter,
+  Inject,
   Input,
   OnDestroy,
-  Optional,
   Output,
   Predicate,
 } from '@angular/core';
-import { DtSelectableColumn } from '../simple-columns/checkbox-column';
 import { takeUntil, tap } from 'rxjs/operators';
-import { BehaviorSubject, Subject } from 'rxjs';
-import {
-  DtSimpleColumnBase,
-  DtSimpleColumnDisplayAccessorFunction,
-} from '../simple-columns/simple-column-base';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { DtSimpleColumnDisplayAccessorFunction } from '../simple-columns/simple-column-base';
+
+export const DT_SELECTABLE_COLUMN_TOKEN = 'DtSelectableColumn';
+
+export interface DtSelectableColumn<T> {
+  selectionToggled: Observable<T | null>;
+  name: string;
+  displayAccessor: DtSimpleColumnDisplayAccessorFunction<T>;
+  allSelected?: boolean;
+  anySelected?: boolean;
+}
 
 /** Directive for managing selection changes of a DtSelectableColumn. */
 @Directive({
@@ -52,7 +58,9 @@ export class DtSelection<T> implements AfterViewInit, OnDestroy {
   /** @internal Initialized subject that fires on initialization and completes on destroy. */
   readonly _initialized = new BehaviorSubject<boolean>(false);
 
-  constructor(@Optional() _column: DtSimpleColumnBase<T>) {
+  constructor(
+    @Inject(DT_SELECTABLE_COLUMN_TOKEN) _column: DtSelectableColumn<T>,
+  ) {
     this._selectableColumn = (_column as unknown) as DtSelectableColumn<T>;
     this._selectableColumn.selectionToggled
       .pipe(
