@@ -1004,7 +1004,7 @@ export const EXAMPLES_MAP = new Map<string, Type<unknown>>([
   ['DtExampleTableProblem', DtExampleTableProblem],
   ['DtExampleTableResponsive', DtExampleTableResponsive],
   ['DtExampleTableSearch', DtExampleTableSearch],
-  ['DtExampleTableSelectableColumnComponent', DtExampleTableSelection],
+  ['DtExampleTableSelection', DtExampleTableSelection],
   ['DtExampleTableShowMore', DtExampleTableShowMore],
   ['DtExampleTableSorting', DtExampleTableSorting],
   ['DtExampleTableSortingMixedColumns', DtExampleTableSortingMixedColumns],
