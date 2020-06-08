@@ -212,6 +212,10 @@ export class DtTableDataSource<T> extends DataSource<T> {
   }
   private _pageSize: number = DEFAULT_PAGE_SIZE;
 
+  /**
+   * Instance of the 'DtSelection' directive which is used to listen for changes
+   * of a selectable table column and updating the selection model and vice versa
+   */
   get selection(): DtSelection<T> | null {
     return this._selection;
   }
@@ -230,14 +234,14 @@ export class DtTableDataSource<T> extends DataSource<T> {
       };
       this._selectionChangeSubscription = this._selection.selectionChange.subscribe(
         (event) => {
-          this._selectData(this.filteredData, event);
+          this._selectData(this._sortData(this.filteredData), event);
         },
       );
       this.selectionModel.changed
         .pipe(takeUntil(this._destroy$))
         .subscribe(() =>
           this._updateGlobalSelectionStates(
-            this._getSelectableData(this.filteredData),
+            this._getSelectableData(this._sortData(this.filteredData)),
           ),
         );
     } else {
@@ -246,6 +250,11 @@ export class DtTableDataSource<T> extends DataSource<T> {
   }
 
   private _selection: DtSelection<T> | null = null;
+
+  /**
+   * Selection model to get and update the selected rows of this table
+   * The DtSelection instance has to be set for this to have any effect
+   */
   selectionModel = new SelectionModel<T>(true, [], true);
 
   /**

@@ -34,6 +34,9 @@ import {
   DtSelectableColumn,
 } from '../selection/selection';
 
+/**
+ * displayAccessor that provides the selection state of a specific table row
+ */
 export interface DtCheckboxColumnDisplayAccessor {
   disabled?: boolean;
   checked?: boolean;
@@ -54,12 +57,29 @@ export interface DtCheckboxColumnDisplayAccessor {
 })
 export class DtCheckboxColumn<T> extends DtSimpleColumnBase<T>
   implements DtSelectableColumn<T> {
+  /**
+   * Forwards the 'DtCheckboxChange' event when a specific table row is clicked
+   */
   @Output()
   readonly checkboxRowChanged = new EventEmitter<DtCheckboxChange<T>>();
+
+  /**
+   * Forwards the 'DtCHeckboxChange' event of the checkbox displayed in the column header
+   */
   @Output()
   readonly checkboxHeaderChanged = new EventEmitter<DtCheckboxChange<T>>();
+
+  /**
+   * Fires an event when either the checkbox of a table row or the checkbox header is clicked
+   * The event value is the value of the table row that is clicked or null if the header checkbox is clicked
+   */
   @Output()
   readonly selectionToggled = new EventEmitter<T | null>();
+
+  /**
+   * Flag that determines whether the checkbox in the column header is shown or not
+   * Defaults to true
+   */
   @Input()
   showHeaderCheckbox = true;
 
@@ -80,15 +100,24 @@ export class DtCheckboxColumn<T> extends DtSimpleColumnBase<T>
 
   _anySelected$ = new BehaviorSubject<boolean>(false);
 
+  /**
+   * Function to provide aria-labels for table rows based on the row value or undefined for the header checkbox
+   */
   @Input()
   ariaLabelProvider: (value: T | undefined) => string = () => this.label;
 
+  /**
+   * @param value whether any table row is currently selected or not
+   */
   @Input()
   set anySelected(value: boolean) {
     this._anySelected = value;
     this._anySelected$.next(value && !this.allSelected);
   }
 
+  /**
+   * Whether all table rows are currently selected or not
+   */
   @Input() private _allSelected = false;
 
   get allSelected(): boolean {
