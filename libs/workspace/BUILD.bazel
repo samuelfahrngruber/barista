@@ -29,7 +29,7 @@ ts_library(
     module_root = "src",
     tsconfig = "tsconfig_lib",
     deps = [
-        "//libs/shared/node:shared_node",
+        "//libs/shared/node",
         "@npm//@angular-devkit/architect",
         "@npm//@angular-devkit/build-ng-packagr",
         "@npm//@angular-devkit/core",

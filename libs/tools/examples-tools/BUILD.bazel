@@ -1,0 +1,44 @@
+load("@npm_bazel_typescript//:index.bzl", "ts_config", "ts_library")
+load("@build_bazel_rules_nodejs//:index.bzl", "nodejs_binary")
+load("//tools/bazel_rules:index.bzl", "rollup")
+
+package(default_visibility = ["//:__subpackages__"])
+
+nodejs_binary(
+    name = "examples-tools",
+    data = [":bundle"],
+    entry_point = ":bundle",
+)
+
+rollup(
+    name = "bundle",
+    entry_point = {"src/main.ts": "examples-tools.js"},
+    deps = [
+        ":compile",
+    ],
+)
+
+ts_library(
+    name = "compile",
+    srcs = glob(["src/**/*.ts"]),
+    module_name = "@dynatrace/tools/examples-tools",
+    module_root = "src",
+    tsconfig = "tsconfig",
+    deps = [
+        "//environments",
+        "//libs/shared/barista-definitions:barista-definitions_compile",
+        "//libs/shared/node",
+        "@npm//@types/node",
+        "@npm//chalk",
+        "@npm//tslib",
+        "@npm//typescript",
+    ],
+)
+
+ts_config(
+    name = "tsconfig",
+    src = "tsconfig.json",
+    deps = [
+        "//:tsconfig.json",
+    ],
+)

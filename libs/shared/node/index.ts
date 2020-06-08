@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-export * from './utils';
-export * from './interfaces';
-export * from './circle-ci-api';
+export * from './src/utils';
+export * from './src/interfaces';
+export * from './src/circle-ci-api';

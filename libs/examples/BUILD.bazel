@@ -1,9 +1,10 @@
 load("//libs/barista-components:config.bzl", "COMPONENT_TARGETS")
+load("@build_bazel_rules_nodejs//:index.bzl", "npm_package_bin" , "nodejs_binary")
 
-package(default_visibility = ["//visibility:public"])
+package(default_visibility = ["//:__subpackages__"])
 
 filegroup(
-    name = "examples",
+    name = "sources",
     srcs = glob(
         include = ["**/*.ts"],
         exclude = [
@@ -15,3 +16,26 @@ filegroup(
         "**/*.scss",
     ]) + ["//libs/testing/fixtures"] + COMPONENT_TARGETS,
 )
+
+npm_package_bin(
+    name = "examples-tools",
+    tool = "//libs/tools/examples-tools",
+    outs = ["libs/examples/src/index.ts"],
+    data = [
+        ":sources",
+        "src/examples.module.template",
+        "src/index.template",
+
+    ],
+    # output_dir = True,
+    # package_bin = "src/main.js",
+)
+
+# # Allow any ts_library rules in this workspace to reference the config
+# exports_files(
+#     [
+#         "src/examples.module.template",
+#         "src/index.template",
+#     ],
+#     visibility = ["//libs/tools/examples-tools:__subpackages__"],
+# )
