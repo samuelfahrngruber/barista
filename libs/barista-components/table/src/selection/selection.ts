@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
+import { SelectionModel } from '@angular/cdk/collections';
 import {
   AfterViewInit,
   Directive,
   EventEmitter,
-  Inject,
   Input,
   OnDestroy,
   Output,
   Predicate,
 } from '@angular/core';
-import { takeUntil, tap } from 'rxjs/operators';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { DtSimpleColumnDisplayAccessorFunction } from '../simple-columns/simple-column-base';
 
 /**
  * Token used to inject a 'DtSelectableColumn'
  */
-export const DT_SELECTABLE_COLUMN_TOKEN = 'DtSelectableColumn';
+// export const DT_SELECTABLE_COLUMN_TOKEN = 'DtSelectableColumn';
 
 /**
  * Interface that has to be implemented by table columns that support default selection handling
@@ -74,57 +73,55 @@ export class DtSelection<T> implements AfterViewInit, OnDestroy {
   @Input()
   selectable: Predicate<T> = () => true;
 
-  private _selectableColumn: DtSelectableColumn<T>;
-
   /** @internal Initialized subject that fires on initialization and completes on destroy. */
   readonly _initialized = new BehaviorSubject<boolean>(false);
 
-  constructor(
-    @Inject(DT_SELECTABLE_COLUMN_TOKEN) _column: DtSelectableColumn<T>,
-  ) {
-    this._selectableColumn = (_column as unknown) as DtSelectableColumn<T>;
-    this._selectableColumn.selectionToggled
-      .pipe(
-        takeUntil(this._destroy),
-        tap((event: T | null) => {
-          this.selectionChange.emit(event);
-        }),
-      )
-      .subscribe();
+  _selectionModel = new SelectionModel<T>(true);
+
+  constructor() {
+    // this._selectableColumn = (_column as unknown) as DtSelectableColumn<T>;
+    // this._selectableColumn.selectionToggled
+    //   .pipe(
+    //     takeUntil(this._destroy),
+    //     tap((event: T | null) => {
+    //       this.selectionChange.emit(event);
+    //     }),
+    //   )
+    //   .subscribe();
   }
 
-  /**
-   * @param accessor custom display accessor that provides the state of a given table row to the 'DtSelectableColumn'
-   */
-  set displayAccessor(accessor: DtSimpleColumnDisplayAccessorFunction<T>) {
-    //Call this async to prevent 'Expression has changed after it was checked' errors
-    setTimeout(() => {
-      this._selectableColumn.displayAccessor = accessor;
-    });
-  }
+  // /**
+  //  * @param accessor custom display accessor that provides the state of a given table row to the 'DtSelectableColumn'
+  //  */
+  // set displayAccessor(accessor: DtSimpleColumnDisplayAccessorFunction<T>) {
+  //   //Call this async to prevent 'Expression has changed after it was checked' errors
+  //   setTimeout(() => {
+  //     this._selectableColumn.displayAccessor = accessor;
+  //   });
+  // }
 
-  /**
-   * @param allSelected whether all table rows are currently selected or not
-   */
-  set allSelected(allSelected: boolean) {
-    this._selectableColumn.allSelected = allSelected;
-  }
+  // /**
+  //  * @param allSelected whether all table rows are currently selected or not
+  //  */
+  // set allSelected(allSelected: boolean) {
+  //   this._selectableColumn.allSelected = allSelected;
+  // }
 
-  /**
-   * @param anySelected whether any table row is currently selected or not
-   */
-  set anySelected(anySelected: boolean) {
-    this._selectableColumn.anySelected = anySelected;
-  }
+  // /**
+  //  * @param anySelected whether any table row is currently selected or not
+  //  */
+  // set anySelected(anySelected: boolean) {
+  //   this._selectableColumn.anySelected = anySelected;
+  // }
 
-  private _destroy = new Subject<void>();
+  // private _destroy = new Subject<void>();
 
   ngAfterViewInit(): void {
     this._initialized.next(true);
   }
 
   ngOnDestroy(): void {
-    this._destroy.complete();
+    // this._destroy.complete();
     this._initialized.complete();
   }
 }

@@ -4,9 +4,8 @@
       <dt-checkbox
         *ngIf="showHeaderCheckbox"
         (change)="_toggleAllSelection($event)"
-        [checked]="allSelected"
-        [indeterminate]="_anySelected$ | async"
-        [aria-label]="ariaLabelProvider(undefined)"
+        [checked]="_isAllSelected$ | async"
+        [indeterminate]="_isAnySelected$ | async"
       ></dt-checkbox>
       {{ label }}
     </dt-header-cell>
@@ -15,11 +14,9 @@
   <dt-cell *dtCellDef="let row" class="dt-selectable-column">
     <dt-checkbox
       [value]="row"
-      [disabled]="_isDisabled(row) | async"
-      [indeterminate]="_isIndeterminate(row) | async"
-      [checked]="_isChecked(row) | async"
+      [disabled]="rowDisabledAccessorFn(row)"
+      [checked]="_isSelected(row)"
       (change)="_toggleRow($event, row)"
-      [aria-label]="ariaLabelProvider(row)"
     ></dt-checkbox>
   </dt-cell>
 </ng-container>

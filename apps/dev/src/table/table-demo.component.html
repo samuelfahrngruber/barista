@@ -6,12 +6,28 @@
 ></dt-table-search>
 
 <ng-container>
-  <dt-table [dataSource]="dataSource">
+  <dt-table [dataSource]="dataSource" dtSelection>
     <dt-checkbox-column
       [showHeaderCheckbox]="true"
-      dtSelection
       name="select"
     ></dt-checkbox-column>
+    <!-- <ng-container dtColumnDef="select">
+      <ng-container *dtHeaderCellDef>
+        <dt-header-cell class="dt-selectable-column">
+          <dt-checkbox
+            (change)="_toggleAllSelection($event)"
+          ></dt-checkbox>
+        </dt-header-cell>
+      </ng-container>
+
+      <dt-cell *dtCellDef="let row" class="dt-selectable-column">
+        <dt-checkbox
+          [value]="row"
+          [checked]="_isSelected(row)"
+          (change)="_toggleRow($event, row)"
+        ></dt-checkbox>
+      </dt-cell>
+    </ng-container> -->
     <ng-container dtColumnDef="host" dtColumnAlign="text">
       <dt-header-cell *dtHeaderCellDef>Host</dt-header-cell>
       <dt-cell *dtCellDef="let row">

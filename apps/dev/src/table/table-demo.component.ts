@@ -32,6 +32,8 @@ import {
   DtTableDataSource,
   DtTableSearch,
 } from '@dynatrace/barista-components/table';
+import { SelectionModel } from '@angular/cdk/collections';
+import { DtCheckboxChange } from '@dynatrace/barista-components/checkbox';
 
 interface HostUnit {
   host: string;
@@ -47,7 +49,7 @@ interface HostUnit {
 })
 export class TableDemo implements OnInit, OnDestroy, AfterViewInit {
   show = true;
-  pageSize = 3;
+  pageSize = 20;
   searchValue = '';
   dataSource: DtTableDataSource<HostUnit> = new DtTableDataSource();
 
@@ -81,6 +83,40 @@ export class TableDemo implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  _selectionModel = new SelectionModel<HostUnit>(true);
+
+  _isAllSelected(): boolean {
+    const numSelected = this._selectionModel.selected.length;
+    const numRows = (this.dataSource as DtTableDataSource<HostUnit>).data
+      .length;
+    return numSelected == numRows;
+  }
+
+  _isAnySelected(): boolean {
+    return this._selectionModel.hasValue() && !this._isAllSelected();
+  }
+
+  _isSelected(row: HostUnit): boolean {
+    return this._selectionModel.isSelected(row);
+  }
+
+  _toggleRow(changeEvent: DtCheckboxChange<HostUnit>, row: HostUnit): void {
+    if (changeEvent.checked) {
+      this._selectionModel.select(row);
+    } else {
+      this._selectionModel.deselect(row);
+    }
+  }
+
+  _toggleAllSelection(changeEvent: DtCheckboxChange<HostUnit>): void {
+    const data = this.dataSource.data;
+    if (changeEvent.checked) {
+      this._selectionModel.select(...data);
+    } else {
+      this._selectionModel.clear();
+    }
   }
 
   dataSource1: HostUnit[] = [

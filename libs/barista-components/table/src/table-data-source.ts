@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
+import { SelectionModel } from '@angular/cdk/collections';
 import { DataSource } from '@angular/cdk/table';
+import { compareValues, isNumber } from '@dynatrace/barista-components/core';
+import { DtPagination } from '@dynatrace/barista-components/pagination';
 import {
   BehaviorSubject,
   combineLatest,
@@ -25,11 +28,8 @@ import {
   Subscription,
 } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-
-import { compareValues, isNumber } from '@dynatrace/barista-components/core';
-import { DtPagination } from '@dynatrace/barista-components/pagination';
-
 import { DtTableSearch } from './search';
+import { DtSelection } from './selection/selection';
 import {
   DtSimpleColumnComparatorFunction,
   DtSimpleColumnDisplayAccessorFunction,
@@ -37,10 +37,6 @@ import {
 } from './simple-columns';
 import { DtSort, DtSortEvent } from './sort/sort';
 import { DtTable } from './table';
-import { SelectionModel } from '@angular/cdk/collections';
-import { DtSelection } from './selection/selection';
-import { isNil } from 'lodash-es';
-import { DtCheckboxColumnDisplayAccessor } from './simple-columns/checkbox-column';
 
 export type DtSortAccessorFunction<T> = (data: T) => any; // tslint:disable-line:no-any
 
@@ -222,31 +218,23 @@ export class DtTableDataSource<T> extends DataSource<T> {
 
   set selection(selection: DtSelection<T> | null) {
     this._selection = selection;
-    this._selectionChangeSubscription.unsubscribe();
-    if (!isNil(this._selection)) {
-      this._selection.displayAccessor = (
-        data: T,
-      ): DtCheckboxColumnDisplayAccessor => {
-        return {
-          disabled: !this._isSelectable(data),
-          checked: this.selectionModel.isSelected(data),
-        };
-      };
-      this._selectionChangeSubscription = this._selection.selectionChange.subscribe(
-        (event) => {
-          this._selectData(this._sortData(this.filteredData), event);
-        },
-      );
-      this.selectionModel.changed
-        .pipe(takeUntil(this._destroy$))
-        .subscribe(() =>
-          this._updateGlobalSelectionStates(
-            this._getSelectableData(this._sortData(this.filteredData)),
-          ),
-        );
-    } else {
-      this._selectionChangeSubscription = Subscription.EMPTY;
-    }
+    // this._selectionChangeSubscription.unsubscribe();
+    // if (this._selection) {
+    //   this._selectionChangeSubscription = this._selection._selectionModel.changed.subscribe(
+    //     (event) => {
+    //       this._selectData(this._sortData(this.filteredData), event);
+    //     },
+    //   );
+    //   this.selectionModel.changed
+    //     .pipe(takeUntil(this._destroy$))
+    //     .subscribe(() =>
+    //       this._updateGlobalSelectionStates(
+    //         this._getSelectableData(this._sortData(this.filteredData)),
+    //       ),
+    //     );
+    // } else {
+    //   this._selectionChangeSubscription = Subscription.EMPTY;
+    // }
   }
 
   private _selection: DtSelection<T> | null = null;
@@ -424,63 +412,60 @@ export class DtTableDataSource<T> extends DataSource<T> {
     return this.sortData(data.slice(), this.sort);
   }
 
-  _selectData(data: T[], row: T | null): void {
-    if (isNil(this._selection)) {
-      return;
-    }
-    const selectableData = this._getSelectableData(data);
-    if (isNil(row)) {
-      if (this.selectionModel.selected.length !== selectableData.length) {
-        this.selectionModel.select(...this._getAllSelection(selectableData));
-      } else {
-        this.selectionModel.clear();
-      }
-    } else if (this._isSelectable(row)) {
-      this.selectionModel.toggle(row);
-    }
-  }
+  // _selectData(data: T[], row: T | null): void {
+  //   // const selectableData = this._getSelectableData(data);
+  //   if (isNil(row)) {
+  //     if (this.selectionModel.selected.length !== data.length) {
+  //       this.selectionModel.select(...this._getAllSelection(data));
+  //     } else {
+  //       this.selectionModel.clear();
+  //     }
+  //   } else if (this._isSelectable(row)) {
+  //     this.selectionModel.toggle(row);
+  //   }
+  // }
 
-  private _getAllSelection(selectableData: T[]): T[] {
-    const limit = this.selection?.selectionLimit;
-    if (limit) {
-      const currentSelection = this.selectionModel.selected;
-      const addSelection = selectableData
-        .filter((entry) => !currentSelection.includes(entry))
-        .slice(0, limit - currentSelection.length);
-      return addSelection.concat(currentSelection);
-    } else {
-      return selectableData;
-    }
-  }
+  // private _getAllSelection(selectableData: T[]): T[] {
+  //   const limit = this.selection?.selectionLimit;
+  //   if (limit) {
+  //     const currentSelection = this.selectionModel.selected;
+  //     const addSelection = selectableData
+  //       .filter((entry) => !currentSelection.includes(entry))
+  //       .slice(0, limit - currentSelection.length);
+  //     return addSelection.concat(currentSelection);
+  //   } else {
+  //     return selectableData;
+  //   }
+  // }
 
-  private _updateGlobalSelectionStates(selectableData: T[]): void {
-    if (isNil(this._selection)) {
-      return;
-    }
-    this._selection.allSelected =
-      (this.selectionModel.selected.length === selectableData.length ||
-        (this._selection.selectionLimit !== undefined &&
-          this.selectionModel.selected.length >=
-            this._selection.selectionLimit)) &&
-      this.selectionModel.selected.length > 0;
-    this._selection.anySelected =
-      this.selectionModel.selected.length !== selectableData.length &&
-      this.selectionModel.selected.length > 0;
-  }
+  // private _updateGlobalSelectionStates(selectableData: T[]): void {
+  //   if (isNil(this._selection)) {
+  //     return;
+  //   }
+  //   this._selection.allSelected =
+  //     (this.selectionModel.selected.length === selectableData.length ||
+  //       (this._selection.selectionLimit !== undefined &&
+  //         this.selectionModel.selected.length >=
+  //           this._selection.selectionLimit)) &&
+  //     this.selectionModel.selected.length > 0;
+  //   this._selection.anySelected =
+  //     this.selectionModel.selected.length !== selectableData.length &&
+  //     this.selectionModel.selected.length > 0;
+  // }
 
-  private _isSelectable = (data: T) => {
-    return (
-      this.selectionModel.isSelected(data) ||
-      (!isNil(this._selection) &&
-        this._selection.selectable(data) &&
-        (this._selection.selectionLimit === undefined ||
-          this.selectionModel.selected.length < this._selection.selectionLimit))
-    );
-  };
+  // private _isSelectable = (data: T) => {
+  //   return (
+  //     this.selectionModel.isSelected(data) ||
+  //     (!isNil(this._selection) &&
+  //       this._selection.selectable(data) &&
+  //       (this._selection.selectionLimit === undefined ||
+  //         this.selectionModel.selected.length < this._selection.selectionLimit))
+  //   );
+  // };
 
-  private _getSelectableData(data: T[]): T[] {
-    return data.filter(this._isSelectable);
-  }
+  // private _getSelectableData(data: T[]): T[] {
+  //   return data.filter(this._isSelectable);
+  // }
 
   /**
    * Returns a filtered data array where each filter object contains the filter string within
