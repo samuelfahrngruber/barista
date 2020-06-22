@@ -6,7 +6,11 @@
 ></dt-table-search>
 
 <ng-container>
-  <dt-table [dataSource]="dataSource" dtTableSelection>
+  <dt-table
+    [dataSource]="dataSource"
+    dtTableSelection
+    [dtTableSelectionSelected]="data.slice(0, 1)"
+  >
     <ng-container dtColumnDef="select">
       <dt-table-header-selector *dtHeaderCellDef></dt-table-header-selector>
       <dt-table-row-selector

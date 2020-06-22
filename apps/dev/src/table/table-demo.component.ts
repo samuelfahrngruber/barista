@@ -56,43 +56,7 @@ export class TableDemo implements OnInit, OnDestroy, AfterViewInit {
   show = true;
   pageSize = 6;
   searchValue = '';
-  dataSource: DtTableDataSource<HostUnit> = new DtTableDataSource();
-
-  private subscription: Subscription = Subscription.EMPTY;
-
-  @ViewChild(DtTableSearch, { static: true })
-  tableSearch: DtTableSearch;
-  @ViewChildren(DtPagination)
-  paginationList: QueryList<DtPagination>;
-
-  disabledPredicate: Predicate<HostUnit> = (value) => {
-    console.log(value.host.includes('docker'));
-    return value.host.includes('docker');
-  };
-
-  ngOnInit(): void {
-    this.subscription = of(this.dataSource1).subscribe((data: HostUnit[]) => {
-      this.dataSource.data = data;
-    });
-    this.dataSource.search = this.tableSearch;
-  }
-
-  ngAfterViewInit(): void {
-    this.paginationList.changes.pipe(startWith(null)).subscribe(() => {
-      if (this.paginationList.first) {
-        this.dataSource.pagination = this.paginationList.first;
-        this.dataSource.pageSize = this.pageSize;
-      } else {
-        this.dataSource.pagination = null;
-      }
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  dataSource1: HostUnit[] = [
+  data = [
     {
       host: 'et-demo-2-win4',
       cpu: '30 %',
@@ -142,6 +106,37 @@ export class TableDemo implements OnInit, OnDestroy, AfterViewInit {
       traffic: '32.7 Mbit/s',
     },
   ];
+  dataSource: DtTableDataSource<HostUnit> = new DtTableDataSource(this.data);
+
+  private subscription: Subscription = Subscription.EMPTY;
+
+  @ViewChild(DtTableSearch, { static: true })
+  tableSearch: DtTableSearch;
+  @ViewChildren(DtPagination)
+  paginationList: QueryList<DtPagination>;
+
+  disabledPredicate: Predicate<HostUnit> = (value) => {
+    return value.host.includes('docker');
+  };
+
+  ngOnInit(): void {
+    this.dataSource.search = this.tableSearch;
+  }
+
+  ngAfterViewInit(): void {
+    this.paginationList.changes.pipe(startWith(null)).subscribe(() => {
+      if (this.paginationList.first) {
+        this.dataSource.pagination = this.paginationList.first;
+        this.dataSource.pageSize = this.pageSize;
+      } else {
+        this.dataSource.pagination = null;
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
 
   options: Highcharts.Options = {
     xAxis: {

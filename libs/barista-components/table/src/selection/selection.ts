@@ -21,6 +21,7 @@ import {
   InjectionToken,
   Inject,
   Optional,
+  Input,
 } from '@angular/core';
 import { isNumber } from '@dynatrace/barista-components/core';
 
@@ -61,8 +62,16 @@ export class DtTableSelection<T> {
   readonly selectionChange = this._selectionModel.changed.asObservable();
 
   /** The currently selected rows */
+  @Input('dtTableSelectionSelected')
   get selected(): T[] {
     return this._selectionModel.selected;
+  }
+  set selected(val: T[]) {
+    console.log('yeah', val);
+    if (Array.isArray(val)) {
+      this._selectionModel.clear();
+      this.select(...val);
+    }
   }
 
   /** Whether the selection limit is currently reached */
