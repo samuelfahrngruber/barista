@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { SelectionModel } from '@angular/cdk/collections';
 import { DataSource } from '@angular/cdk/table';
 import { compareValues, isNumber } from '@dynatrace/barista-components/core';
 import { DtPagination } from '@dynatrace/barista-components/pagination';
@@ -29,7 +28,6 @@ import {
 } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { DtTableSearch } from './search';
-import { DtSelection } from './selection/selection';
 import {
   DtSimpleColumnComparatorFunction,
   DtSimpleColumnDisplayAccessorFunction,
@@ -207,43 +205,6 @@ export class DtTableDataSource<T> extends DataSource<T> {
     this._updateChangeSubscription();
   }
   private _pageSize: number = DEFAULT_PAGE_SIZE;
-
-  /**
-   * Instance of the 'DtSelection' directive which is used to listen for changes
-   * of a selectable table column and updating the selection model and vice versa
-   */
-  get selection(): DtSelection<T> | null {
-    return this._selection;
-  }
-
-  set selection(selection: DtSelection<T> | null) {
-    this._selection = selection;
-    // this._selectionChangeSubscription.unsubscribe();
-    // if (this._selection) {
-    //   this._selectionChangeSubscription = this._selection._selectionModel.changed.subscribe(
-    //     (event) => {
-    //       this._selectData(this._sortData(this.filteredData), event);
-    //     },
-    //   );
-    //   this.selectionModel.changed
-    //     .pipe(takeUntil(this._destroy$))
-    //     .subscribe(() =>
-    //       this._updateGlobalSelectionStates(
-    //         this._getSelectableData(this._sortData(this.filteredData)),
-    //       ),
-    //     );
-    // } else {
-    //   this._selectionChangeSubscription = Subscription.EMPTY;
-    // }
-  }
-
-  private _selection: DtSelection<T> | null = null;
-
-  /**
-   * Selection model to get and update the selected rows of this table
-   * The DtSelection instance has to be set for this to have any effect
-   */
-  selectionModel = new SelectionModel<T>(true, [], true);
 
   /**
    * Data accessor function that is used for accessing data properties for sorting through

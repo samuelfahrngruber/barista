@@ -56,8 +56,11 @@ import { DtTableLoadingState } from './states/index';
 import { DtOrder } from './order/order-directive';
 import { DtOrderCell } from './order/order-cell';
 import { DtTable } from './table';
-import { DtCheckboxColumn } from './simple-columns/checkbox-column';
-import { DtSelection } from './selection/selection';
+import {
+  DtTableSelection,
+  DtTableRowSelector,
+  DtTableHeaderSelector,
+} from './selection';
 
 const EXPORTED_DECLARATIONS = [
   DtTable,
@@ -75,7 +78,6 @@ const EXPORTED_DECLARATIONS = [
   DtOrder,
   DtOrderCell,
   DtTableLoadingState,
-  DtSelection,
   DtSort,
   DtSortHeader,
   DtTableSearch,
@@ -83,8 +85,10 @@ const EXPORTED_DECLARATIONS = [
   DtSimpleNumberColumn,
   DtSimpleOrderColumn,
   DtExpandableRowContent,
-  DtCheckboxColumn,
   DtFavoriteColumn,
+  DtTableSelection,
+  DtTableRowSelector,
+  DtTableHeaderSelector,
 ];
 
 @NgModule({

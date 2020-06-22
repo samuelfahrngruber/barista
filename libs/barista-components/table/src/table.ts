@@ -114,6 +114,11 @@ export class DtTable<T> extends _DtTableBase<T> implements OnDestroy {
     return !(this._data && this._data.length);
   }
 
+  /** @internal The snapshot of the current data */
+  get _dataSnapshot(): T[] | readonly T[] {
+    return this._data;
+  }
+
   /** @internal The QueryList that holds the empty state component */
   @ContentChildren(DtEmptyState) _emptyState: QueryList<DtEmptyState>;
 

@@ -22,18 +22,17 @@ import {
   QueryList,
   ViewChild,
   ViewChildren,
+  Predicate,
 } from '@angular/core';
 import { Subscription, of } from 'rxjs';
 import { startWith } from 'rxjs/operators';
 
 import { DtPagination } from '@dynatrace/barista-components/pagination';
 import {
-  DtSelection,
   DtTableDataSource,
   DtTableSearch,
+  DT_TABLE_SELECTION_CONFIG,
 } from '@dynatrace/barista-components/table';
-import { SelectionModel } from '@angular/cdk/collections';
-import { DtCheckboxChange } from '@dynatrace/barista-components/checkbox';
 
 interface HostUnit {
   host: string;
@@ -46,10 +45,16 @@ interface HostUnit {
   selector: 'table-dev-app-demo',
   templateUrl: './table-demo.component.html',
   styleUrls: ['./table-demo.component.scss'],
+  providers: [
+    {
+      provide: DT_TABLE_SELECTION_CONFIG,
+      useValue: { selectionLimit: 3 },
+    },
+  ],
 })
 export class TableDemo implements OnInit, OnDestroy, AfterViewInit {
   show = true;
-  pageSize = 20;
+  pageSize = 6;
   searchValue = '';
   dataSource: DtTableDataSource<HostUnit> = new DtTableDataSource();
 
@@ -59,8 +64,11 @@ export class TableDemo implements OnInit, OnDestroy, AfterViewInit {
   tableSearch: DtTableSearch;
   @ViewChildren(DtPagination)
   paginationList: QueryList<DtPagination>;
-  @ViewChild(DtSelection, { static: true })
-  selection: DtSelection<HostUnit>;
+
+  disabledPredicate: Predicate<HostUnit> = (value) => {
+    console.log(value.host.includes('docker'));
+    return value.host.includes('docker');
+  };
 
   ngOnInit(): void {
     this.subscription = of(this.dataSource1).subscribe((data: HostUnit[]) => {
@@ -78,45 +86,10 @@ export class TableDemo implements OnInit, OnDestroy, AfterViewInit {
         this.dataSource.pagination = null;
       }
     });
-    this.dataSource.selection = this.selection;
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
-  }
-
-  _selectionModel = new SelectionModel<HostUnit>(true);
-
-  _isAllSelected(): boolean {
-    const numSelected = this._selectionModel.selected.length;
-    const numRows = (this.dataSource as DtTableDataSource<HostUnit>).data
-      .length;
-    return numSelected == numRows;
-  }
-
-  _isAnySelected(): boolean {
-    return this._selectionModel.hasValue() && !this._isAllSelected();
-  }
-
-  _isSelected(row: HostUnit): boolean {
-    return this._selectionModel.isSelected(row);
-  }
-
-  _toggleRow(changeEvent: DtCheckboxChange<HostUnit>, row: HostUnit): void {
-    if (changeEvent.checked) {
-      this._selectionModel.select(row);
-    } else {
-      this._selectionModel.deselect(row);
-    }
-  }
-
-  _toggleAllSelection(changeEvent: DtCheckboxChange<HostUnit>): void {
-    const data = this.dataSource.data;
-    if (changeEvent.checked) {
-      this._selectionModel.select(...data);
-    } else {
-      this._selectionModel.clear();
-    }
   }
 
   dataSource1: HostUnit[] = [
