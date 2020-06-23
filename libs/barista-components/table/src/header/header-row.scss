@@ -8,6 +8,12 @@
   display: table-row;
 }
 
+:host-context(.dt-table-expandable-rows).dt-header-row {
+  // We need to add 2px horizontal padding so that checkboxes for selection are
+  // aligned with the ones in the rows
+  padding: 0 2px;
+}
+
 :host.dt-header-row.dt-table-sticky {
   background-color: #ffffff;
 }

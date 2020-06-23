@@ -65,6 +65,7 @@ let nextUniqueId = 0;
   host: {
     class: 'dt-table',
     '[class.dt-table-interactive-rows]': 'interactiveRows',
+    '[class.dt-table-expandable-rows]': '_hasExpandableRows',
   },
 })
 export class DtTable<T> extends _DtTableBase<T> implements OnDestroy {
@@ -90,6 +91,9 @@ export class DtTable<T> extends _DtTableBase<T> implements OnDestroy {
 
   /** @internal A generated UID */
   _uniqueId = `dt-table-${nextUniqueId++}`;
+
+  /** @internal Whether a expandable row is registered with the table */
+  _hasExpandableRows = false;
 
   /** Whether the loading state should be displayed. */
   @Input()

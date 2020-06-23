@@ -22,6 +22,8 @@ import {
   Inject,
   Optional,
   Input,
+  ChangeDetectorRef,
+  OnInit,
 } from '@angular/core';
 import { isNumber } from '@dynatrace/barista-components/core';
 
@@ -50,9 +52,12 @@ export const DT_TABLE_SELECTION_CONFIG = new InjectionToken<
     class: 'dt-table-selection',
   },
 })
-export class DtTableSelection<T> {
+export class DtTableSelection<T> implements OnInit {
   /** The selection model used for handling selection states */
   private _selectionModel = new SelectionModel<T>(true);
+
+  /** Whether the component is already initialized */
+  private _initialized = false;
 
   /**
    * Fires an event when the selection of the DtSelectableColumn changes
@@ -61,16 +66,20 @@ export class DtTableSelection<T> {
   @Output('dtTableSelectionChange')
   readonly selectionChange = this._selectionModel.changed.asObservable();
 
-  /** The currently selected rows */
-  @Input('dtTableSelectionSelected')
+  /**
+   * The rows that should be selected initially
+   *
+   * Note that the items passed to this input are checked with object equality
+   * with the data passed to the dataSource input on the table
+   */
+  @Input('dtTableSelectionInitial')
   get selected(): T[] {
     return this._selectionModel.selected;
   }
   set selected(val: T[]) {
-    console.log('yeah', val);
-    if (Array.isArray(val)) {
-      this._selectionModel.clear();
+    if (Array.isArray(val) && !this._initialized) {
       this.select(...val);
+      this._changeDetectorRef.markForCheck();
     }
   }
 
@@ -78,15 +87,20 @@ export class DtTableSelection<T> {
   get selectionLimitReached(): boolean {
     return (
       isNumber(this._config?.selectionLimit) &&
-      this._config.selectionLimit <= this._selectionModel.selected.length
+      this._config!.selectionLimit <= this._selectionModel.selected.length
     );
   }
 
   constructor(
+    private _changeDetectorRef: ChangeDetectorRef,
     @Optional()
     @Inject(DT_TABLE_SELECTION_CONFIG)
-    private _config: DtTableSelectionConfig,
+    private _config?: DtTableSelectionConfig,
   ) {}
+
+  ngOnInit(): void {
+    this._initialized = true;
+  }
 
   /**
    * Selects a row or an array of rows. Does not consider the selectionLimit configured.

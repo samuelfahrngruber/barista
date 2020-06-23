@@ -21,6 +21,7 @@ import {
   ChangeDetectionStrategy,
   OnDestroy,
   Predicate,
+  ViewEncapsulation,
 } from '@angular/core';
 import { DtCheckboxChange } from '@dynatrace/barista-components/checkbox';
 import { DtTable } from '../table';
@@ -30,7 +31,7 @@ import { Subscription } from 'rxjs';
 /** Handles row selection in combination with the DtTableSelection directive on the table */
 @Component({
   selector: 'dt-table-row-selector',
-  template: ` <dt-cell class="dt-selectable-column">
+  template: ` <dt-cell class="dt-selectable-cell">
     <dt-checkbox
       [disabled]="disabled(row) || _disabledDueToLimit"
       [value]="row"
@@ -40,14 +41,15 @@ import { Subscription } from 'rxjs';
   </dt-cell>`,
   styles: [
     `
-      .dt-selectable-column .dt-checkbox {
-        margin-right: 8px;
-      }
-      .dt-selectable-column ::ng-deep .dt-checkbox-content {
+      .dt-selectable-cell .dt-checkbox-content {
         display: none;
+      }
+      .dt-selectable-cell .dt-checkbox-container {
+        margin-right: 0;
       }
     `,
   ],
+  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DtTableRowSelector<T> implements OnDestroy {
@@ -106,7 +108,7 @@ export class DtTableRowSelector<T> implements OnDestroy {
 @Component({
   selector: 'dt-table-header-selector',
   template: `
-    <dt-header-cell class="dt-selectable-column">
+    <dt-header-cell class="dt-selectable-cell">
       <dt-checkbox
         (change)="_toggleAllSelection($event)"
         [checked]="_isAllSelected"

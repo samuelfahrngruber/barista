@@ -24,7 +24,7 @@ import {
   ViewChildren,
   Predicate,
 } from '@angular/core';
-import { Subscription, of } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { startWith } from 'rxjs/operators';
 
 import { DtPagination } from '@dynatrace/barista-components/pagination';
@@ -48,7 +48,7 @@ interface HostUnit {
   providers: [
     {
       provide: DT_TABLE_SELECTION_CONFIG,
-      useValue: { selectionLimit: 3 },
+      useValue: { selectionLimit: 2 },
     },
   ],
 })
