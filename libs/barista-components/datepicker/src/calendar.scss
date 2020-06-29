@@ -1,0 +1,18 @@
+:host {
+  display: block;
+}
+
+.dt-calendar-header {
+  display: flex;
+}
+
+.dt-calendar-header-button {
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.dt-calendar-header-label {
+  flex-grow: 1;
+  flex-shrink: 1;
+  text-align: center;
+}

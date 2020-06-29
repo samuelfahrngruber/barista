@@ -1,0 +1,29 @@
+:host {
+  display: block;
+}
+
+.dt-calendar-table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.dt-calendar-table-header th {
+  text-align: center;
+  padding: 0 0 8px 0;
+}
+
+.dt-calendar-table-cell {
+  position: relative;
+  text-align: center;
+  outline: none;
+  cursor: pointer;
+}
+
+.dt-calendar-active {
+  background-color: green;
+}
+
+.dt-calendar-selected {
+  background-color: red;
+}
