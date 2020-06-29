@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-import { Directive, ElementRef } from '@angular/core';
+import { Directive, ElementRef, ChangeDetectorRef } from '@angular/core';
+import {
+  Highlightable,
+  InteractivityChecker,
+  FocusMonitor,
+} from '@angular/cdk/a11y';
+import { Subject } from 'rxjs';
 
 /**
  * A breadcrumbs item that can be used within the `<dt-breadcrumbs>`.
@@ -27,10 +33,48 @@ import { Directive, ElementRef } from '@angular/core';
   exportAs: 'dtBreadcrumbsItem',
   host: {
     class: 'dt-breadcrumbs-item',
+    '[class.dt-breadcrumbs-item-active]': '_active',
+    '[class.dt-breadcrumbs-item-non-interactive]': '!_isFocusable',
+    '(keydown)': '_onKeyDown($event)',
   },
 })
-export class DtBreadcrumbsItem2 {
-  constructor(readonly _elementRef: ElementRef<HTMLAnchorElement>) {}
+export class DtBreadcrumbsItem2 implements Highlightable {
+  constructor(
+    readonly _elementRef: ElementRef<HTMLAnchorElement>,
+    private _changeDetectorRef: ChangeDetectorRef,
+    private _interactivityChecker: InteractivityChecker,
+    private _focusMonitor: FocusMonitor,
+  ) {
+    this._focusMonitor.monitor(this._elementRef.nativeElement);
+  }
+
+  _active: boolean = false;
+
+  get _isFocusable(): boolean {
+    return this._interactivityChecker.isFocusable(
+      this._elementRef.nativeElement,
+    );
+  }
+
+  _onKeyDown$ = new Subject<KeyboardEvent>();
+
+  /** Applies the styles for an active item to this item. Part of the Highlightable interface */
+  setActiveStyles(): void {
+    if (!this._active && this._isFocusable) {
+      this._active = true;
+      // Does this make sense here?
+      this._elementRef.nativeElement.focus();
+      this._changeDetectorRef.markForCheck();
+    }
+  }
+
+  /** Applies the styles for an inactive item to this item. Part of the Highlightable interface */
+  setInactiveStyles(): void {
+    if (this._active && this._isFocusable) {
+      this._active = false;
+      this._changeDetectorRef.markForCheck();
+    }
+  }
 
   /** @internal */
   _setCurrent(current: boolean): void {
@@ -42,5 +86,9 @@ export class DtBreadcrumbsItem2 {
         element.removeAttribute('aria-current');
       }
     }
+  }
+
+  _onKeyDown(event: KeyboardEvent): void {
+    this._onKeyDown$.next(event);
   }
 }

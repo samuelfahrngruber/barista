@@ -1,1 +1,9 @@
+<button
+  #collapseTrigger
+  class="dt-breadcrumb-collapsed-trigger"
+  *ngIf="_hasHiddenItems"
+  (click)="_openOverlay()"
+>
+  &hellip;
+</button>
 <ng-content></ng-content>

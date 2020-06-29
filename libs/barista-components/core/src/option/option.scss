@@ -1,30 +1,5 @@
-@import '../../../style/font-mixins';
-@import '../style/variables';
+@import '../style/option';
 
 :host {
-  @include dt-main-font();
-  display: block;
-  padding: 0 12px;
-  font-size: 14px;
-  line-height: 28px;
-  cursor: default;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  outline: none;
-  font-variant: tabular-nums;
-
-  &:not(.dt-option-disabled):hover,
-  &:not(.dt-option-disabled).dt-option-active {
-    background-color: $turquoise-100;
-    cursor: pointer;
-  }
-
-  &.dt-option-selected {
-    font-weight: 700;
-  }
-
-  &.dt-option-disabled {
-    color: $disabledcolor;
-  }
+  @include dt-option();
 }

@@ -18,14 +18,23 @@ import { A11yModule } from '@angular/cdk/a11y';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { DtIconModule } from '@dynatrace/barista-components/icon';
 
 import { DtBreadcrumbs } from './breadcrumbs';
 import { DtBreadcrumbsItem2 } from './breadcrumbs-item';
 import { PortalModule } from '@angular/cdk/portal';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 @NgModule({
-  exports: [DtBreadcrumbs, DtBreadcrumbsItem2],
+  exports: [DtBreadcrumbs, DtBreadcrumbsItem2, OverlayModule],
   declarations: [DtBreadcrumbs, DtBreadcrumbsItem2],
-  imports: [A11yModule, CommonModule, RouterModule, PortalModule],
+  imports: [
+    A11yModule,
+    CommonModule,
+    RouterModule,
+    PortalModule,
+    DtIconModule,
+    OverlayModule,
+  ],
 })
 export class DtBreadcrumbsModule {}
