@@ -11,6 +11,7 @@ const entries = [
   'src/builders/typescript/index.ts',
   'src/builders/packager/index.ts',
   'src/builders/stylelint/index.ts',
+  'src/builders/design-tokens/build/cli.ts',
   'src/builders/design-tokens/build/index.ts',
   'src/builders/design-tokens/package/index.ts',
   'src/builders/design-tokens/dependency-tree/index.ts',

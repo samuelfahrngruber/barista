@@ -1,0 +1,37 @@
+load("//tools/bazel_rules:index.bzl", "ng_module")
+load("@io_bazel_rules_sass//:defs.bzl", "sass_binary")
+
+package(default_visibility = ["//apps/design-tokens-ui:__subpackages__"])
+
+ng_module(
+    name = "app",
+    srcs = glob(
+        include = ["*.ts"],
+        exclude = ["**/.spec.ts"],
+    ),
+    angular_assets = [
+        "app.component.html",
+        ":styles",
+    ],
+    tsconfig = "//apps/design-tokens-ui:tsconfig-app",
+    deps = [
+        # "//src/app/hello-world",
+        # "//src/app/home",
+        # "//src/app/todos",
+        # "//src/app/todos/reducers",
+        # "//src/shared/material",
+        # "@npm//@angular/core",
+        # "@npm//@angular/platform-browser",
+        # "@npm//@angular/router",
+        # "@npm//@ngrx/store",
+    ],
+)
+
+sass_binary(
+    name = "styles",
+    src = "app.component.scss",
+    deps = [
+        "//apps/design-tokens-ui/src/styles",
+        "//libs/barista-components/style",
+    ],
+)

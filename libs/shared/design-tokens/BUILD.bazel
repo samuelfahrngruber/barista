@@ -1,0 +1,13 @@
+load("//tools/bazel_rules:index.bzl", "design_tokens")
+
+package(default_visibility = ["//:__subpackages__"])
+
+design_tokens(
+    name = "build",
+    aliases = glob(["src/lib/aliases/**/*.yml"]),
+    entrypoints =
+        glob([
+            "src/lib/global/**/*.yml",
+            "src/lib/patterns/**/*.yml",
+        ]),
+)

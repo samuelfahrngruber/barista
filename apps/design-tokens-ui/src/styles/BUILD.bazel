@@ -1,0 +1,8 @@
+load("@io_bazel_rules_sass//:defs.bzl", "sass_library")
+
+package(default_visibility = ["//apps/design-tokens-ui:__subpackages__"])
+
+sass_library(
+    name = "styles",
+    srcs = glob(["**/*.scss"]),
+)

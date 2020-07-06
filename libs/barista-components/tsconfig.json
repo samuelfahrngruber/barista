@@ -9,7 +9,7 @@
     "enableResourceInlining": true,
     "enableSummariesForJit": true,
     "enableIvy": false,
-    "trace": true,
+    "trace": true
   },
   "compilerOptions": {
     "types": ["node", "jest"]

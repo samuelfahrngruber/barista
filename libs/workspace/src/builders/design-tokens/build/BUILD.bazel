@@ -1,5 +1,30 @@
 load("@npm//@bazel/typescript:index.bzl", "ts_library")
 load("@build_bazel_rules_nodejs//:index.bzl", "nodejs_binary")
+package(default_visibility = ["//:__subpackages__"])
+
+# genrule(
+#     name = "build",
+#     outs = ["concatenated.txt"],
+#     cmd = """$(execpath :cli) \
+#         --entrypoints "global/**.yml" \
+#         --entrypoints "patterns/**.yml" \
+#         --aliasesEntrypoints "aliases/**.yml" \
+#         --outputPath generated \
+#         --baseDirectory libs/shared/design-tokens/src/lib \
+#         --a $(execpath :cli) \
+#         --b $(OUTS) \
+#         --c $(rootpath :cli) \
+#         --d $(location :cli)
+#     """,
+#     # src = []
+#     output_to_bindir = True,
+#     tools = [":cli"],
+# )
+
+            # "entrypoints": ["global/**.yml", "patterns/**.yml"],
+            # "aliasesEntrypoints": ["aliases/**.yml"],
+            # "outputPath": "libs/shared/design-tokens/generated/",
+            # "baseDirectory": "libs/shared/design-tokens/src/lib"
 
 nodejs_binary(
     name = "cli",
