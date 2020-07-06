@@ -14,4 +14,7 @@
  * limitations under the License.
  */
 
-export * from './lib/contrast-colors';
+export * from './src/barista-definitions';
+export * from './src/barista-backend-api-definitions';
+export * from './src/design-tokens-definitions';
+export * from './src/example-definitions';
