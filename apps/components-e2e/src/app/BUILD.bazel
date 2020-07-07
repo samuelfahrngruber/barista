@@ -1,0 +1,21 @@
+load("//tools/bazel_rules:index.bzl", "ng_module")
+
+package(default_visibility = ["//apps/components-e2e:__subpackages__"])
+
+ROUTES = [
+    "//apps/components-e2e/src/components/button",
+]
+
+ng_module(
+    name = "app",
+    srcs = glob(["*.ts"]),
+    tsconfig = "//apps/components-e2e:tsconfig-app",
+    deps = ROUTES + [
+        "//libs/barista-components/icon:compile",
+        "@npm//@angular/common",
+        "@npm//@angular/core",
+        "@npm//@angular/forms",
+        "@npm//@angular/platform-browser",
+        "@npm//@angular/router",
+    ],
+)
