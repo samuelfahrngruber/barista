@@ -2,6 +2,12 @@ load("@npm//@bazel/typescript:index.bzl", "ts_config")
 
 package(default_visibility = ["//apps/components-e2e:__subpackages__"])
 
+# should be run with `ibazel run //apps/components-e2e:serve`
+alias(
+    name = "serve",
+    actual = "//apps/components-e2e/src:devserver",
+)
+
 ts_config(
     name = "tsconfig-app",
     src = ":tsconfig.app.json",
