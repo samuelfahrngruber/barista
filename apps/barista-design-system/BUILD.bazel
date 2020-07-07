@@ -33,6 +33,7 @@ architect(
         "//libs/barista-components/breadcrumbs",
         "//libs/barista-components/button",
         "//libs/barista-components/core",
+        "//libs/barista-components/core:scss_lib",
         "//libs/barista-components/form-field",
         "//libs/barista-components/icon",
         "//libs/barista-components/input",

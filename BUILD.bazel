@@ -12,3 +12,9 @@ exports_files(
     ],
     visibility = ["//visibility:public"],
 )
+
+
+alias(
+    name = "barista-serve",
+    actual = "//apps/components-e2e/src:devserver"
+)

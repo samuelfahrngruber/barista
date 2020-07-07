@@ -22,7 +22,6 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { DtIconModule } from '@dynatrace/barista-components/icon';
 import { DtE2EApp } from './app.component';
 import { AppRoutingModule } from './app.routing.module';
-import { DtOverlayModule } from '@dynatrace/barista-components/overlay';
 
 @NgModule({
   declarations: [DtE2EApp],
@@ -33,7 +32,6 @@ import { DtOverlayModule } from '@dynatrace/barista-components/overlay';
     HttpClientModule,
     DtIconModule.forRoot({ svgIconLocation: '/assets/icons/{{name}}.svg' }),
     AppRoutingModule,
-    DtOverlayModule,
   ],
   bootstrap: [DtE2EApp],
 })

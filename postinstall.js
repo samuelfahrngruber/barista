@@ -44,7 +44,7 @@ function execCommand(cmd) {
         return reject(error);
       }
       const output = stdout ? stdout : stderr;
-      console.log(output)
+      console.log(output);
       resolve(output);
     });
   });
@@ -86,9 +86,11 @@ function updateNgccMainFields() {
   });
 }
 
-main().then(() => {
-  console.log('✅ Successfully run postinstall script!');
-}).catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+main()
+  .then(() => {
+    console.log('✅ Successfully run postinstall script!');
+  })
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
