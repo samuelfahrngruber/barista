@@ -37,13 +37,15 @@ sass_binary(
 ng_module(
     name = "src",
     srcs = [
-        "main.dev.ts",
-        "main.prod.ts",
+        "main.ts",
+        "polyfills.ts",
+        # "main.prod.ts",
     ],
     tsconfig = "//apps/components-e2e:tsconfig-app",
     deps = [
         "//apps/components-e2e/src/app",
         "@npm//@angular/core",
+        "@npm//@angular/platform-browser-dynamic",
         "@npm//@angular/platform-browser",
     ],
 )
@@ -64,12 +66,17 @@ filegroup(
 
 dev_server(
     name = "devserver",
-    assets = [
-        ":styles.css",
-        ":app_styles",
-        "@npm//:node_modules/zone.js/dist/zone.min.js",
-    ],
-    entry_module = "dynatrace/apps/components-e2e/src/main.dev",
-    template = ":index.dev.html",
     deps = [":src"],
 )
+
+# dev_server(
+#     name = "devserver",
+#     assets = [
+#         ":styles.css",
+#         ":app_styles",
+#         "@npm//:node_modules/zone.js/dist/zone.min.js",
+#     ],
+#     entry_module = "dynatrace/apps/components-e2e/src/main.dev",
+#     template = ":index.dev.html",
+#     deps = [":src"],
+# )

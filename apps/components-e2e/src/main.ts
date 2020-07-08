@@ -20,9 +20,16 @@
 // the bootstrap by switching platform-browser-dynamic with
 // platform-browser.
 // This file is completely unused in the Bazel build.
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+// import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+// import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
+// import { DtE2EAppModule } from './app/app.module';
+// platformBrowserDynamic()
+//   .bootstrapModule(DtE2EAppModule)
+//   .catch((err) => console.error(err));
+
+
+import { platformBrowser } from '@angular/platform-browser';
 import { DtE2EAppModule } from './app/app.module';
-platformBrowserDynamic()
-  .bootstrapModule(DtE2EAppModule)
-  .catch((err) => console.error(err));
+
+platformBrowser().bootstrapModule(DtE2EAppModule);

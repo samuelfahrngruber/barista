@@ -47,6 +47,7 @@ def jest_macro(
             # needed by the runner and resolver
             "//tools/bazel_rules/jest:jest-runner.js",
             "//tools/bazel_rules/jest:jest-resolver.js",
+            "//tools/bazel_rules:utils.js",
             "@npm//yargs",
         ],
         entry_point = "//tools/bazel_rules/jest:jest-runner.js",
