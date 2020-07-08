@@ -33,13 +33,13 @@ export const routes: Routes = [
         (module) => module.DtE2EButtonModule,
       ),
   },
-  // {
-  //   path: 'button-group',
-  //   loadChildren: () =>
-  //     import('../components/button-group/button-group.module').then(
-  //       (module) => module.DtE2EButtonGroupModule,
-  //     ),
-  // },
+  {
+    path: 'button-group',
+    loadChildren: () =>
+      import('../components/button-group/button-group.module').then(
+        (module) => module.DtE2EButtonGroupModule,
+      ),
+  },
   // {
   //   path: 'chart',
   //   loadChildren: () =>

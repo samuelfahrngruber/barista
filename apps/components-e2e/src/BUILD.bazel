@@ -48,10 +48,25 @@ ng_module(
     ],
 )
 
+filegroup(
+    name = "app_styles",
+    srcs = [
+        "//libs/barista-components/style:index.css",
+    ],
+)
+
+filegroup(
+    name = "app_fonts",
+    srcs = glob([
+        "node_modules/@dynatrace/barista-fonts/fonts/**",
+    ]),
+)
+
 dev_server(
     name = "devserver",
     assets = [
         ":styles.css",
+        ":app_styles",
         "@npm//:node_modules/zone.js/dist/zone.min.js",
     ],
     entry_module = "dynatrace/apps/components-e2e/src/main.dev",
