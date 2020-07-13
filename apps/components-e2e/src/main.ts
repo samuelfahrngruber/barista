@@ -28,11 +28,10 @@
 //   .catch((err) => console.error(err));
 
 import { platformBrowser } from '@angular/platform-browser';
-// import {DtE2EAppModuleNgFactory} from './app/app.module.ngfactory';
-import { DtE2EAppModule } from './app/app.module';
+// import { DtE2EAppModule } from './app/app.module';
+import { DtE2EAppModuleNgFactory } from './app/app.module.ngfactory';
 
-platformBrowser().bootstrapModule(DtE2EAppModule);
-// platformBrowser().bootstrapModuleFactory(DtE2EAppModuleNgFactory);
+platformBrowser().bootstrapModuleFactory(DtE2EAppModuleNgFactory);
 
 // import { platformBrowser } from '@angular/platform-browser';
 // import { DtE2EAppModule } from './app/app.module';
