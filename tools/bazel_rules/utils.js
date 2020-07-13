@@ -53,7 +53,7 @@ function resolveModuleFileName(fileName, extension = '.js') {
     return `${absolutePath}/src/index${extension}`;
   }
 
-  console.log(absolutePath)
+  console.log(absolutePath);
 
   throw new Error(`Could not resolve the modules file: ${fileName}`);
 }
@@ -63,7 +63,7 @@ function resolveModuleFileName(fileName, extension = '.js') {
  * @param {string} moduleId The module name that should resolved
  * @param {Map<string,string>} moduleMappings The moduleMappings map the key is the moduleId and the value is the relative path
  */
-function resolveModulePath(moduleId, moduleMappings, extension = ".js") {
+function resolveModulePath(moduleId, moduleMappings, extension = '.js') {
   // if we have an exact match then try to resolve it with the matching file name
   if (moduleMappings.has(moduleId)) {
     return resolveModuleFileName(moduleMappings.get(moduleId), extension);
@@ -78,7 +78,7 @@ function resolveModulePath(moduleId, moduleMappings, extension = ".js") {
   if (item) {
     return resolveModuleFileName(
       moduleId.replace(item, moduleMappings.get(item)),
-      extension
+      extension,
     );
   }
 

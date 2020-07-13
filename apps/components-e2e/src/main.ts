@@ -21,15 +21,29 @@
 // platform-browser.
 // This file is completely unused in the Bazel build.
 // import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-// import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 // import { DtE2EAppModule } from './app/app.module';
 // platformBrowserDynamic()
 //   .bootstrapModule(DtE2EAppModule)
 //   .catch((err) => console.error(err));
 
-
 import { platformBrowser } from '@angular/platform-browser';
+// import {DtE2EAppModuleNgFactory} from './app/app.module.ngfactory';
 import { DtE2EAppModule } from './app/app.module';
 
 platformBrowser().bootstrapModule(DtE2EAppModule);
+// platformBrowser().bootstrapModuleFactory(DtE2EAppModuleNgFactory);
+
+// import { platformBrowser } from '@angular/platform-browser';
+// import { DtE2EAppModule } from './app/app.module';
+
+// platformBrowser().bootstrapModule(DtE2EAppModule);
+
+// import { platformBrowser } from '@angular/platform-browser';
+// import { DtE2EAppModule } from './app/app.module';
+
+// platformBrowser().bootstrapModule(DtE2EAppModule).catch(err => {
+//   console.log('CANNOT LOAD AOT MODULE')
+//   console.dir(DtE2EAppModule);
+//   console.error(err)
+//   });

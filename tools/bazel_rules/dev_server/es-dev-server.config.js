@@ -2,8 +2,12 @@ const { argv } = require('yargs');
 const { resolve, dirname, join, extname, relative } = require('path');
 const { URL, pathToFileURL, fileURLToPath } = require('url');
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
-const whatwgUrl = require( 'whatwg-url');
-const { toBrowserPath,generateModuleMappings, resolveModulePath } = require('../utils');
+const whatwgUrl = require('whatwg-url');
+const {
+  toBrowserPath,
+  generateModuleMappings,
+  resolveModulePath,
+} = require('../utils');
 
 const nodeResolvePackageJson = require('@rollup/plugin-node-resolve/package.json');
 
@@ -15,7 +19,6 @@ const fakePluginContext = {
     console.warn('[es-dev-server] node-resolve: ', ...msg);
   },
 };
-
 
 const { port, index, mappings } = argv;
 const indexHTML = relative(process.cwd(), resolve(index));
@@ -41,7 +44,7 @@ const resolver = nodeResolve({
     moduleDirectory: [join(process.cwd(), 'external/npm/node_modules')],
     preserveSymlinks: true,
   },
-})
+});
 
 module.exports = {
   port: port || 4200,
@@ -60,11 +63,15 @@ module.exports = {
     {
       transform(context) {
         if (context.path === indexHTML) {
-          const transformedBody = context.body.replace(/<\/body>/, `
+          const transformedBody = context.body.replace(
+            /<\/body>/,
+            `
 
+    <script src="external/npm/node_modules/zone.js/dist/zone.min.js"></script>
     <script src="apps/components-e2e/src/main.mjs" type="module"></script>
 </body>
-          `);
+          `,
+          );
           return { body: transformedBody };
         }
       },
@@ -78,7 +85,8 @@ module.exports = {
         const [withoutHash, hash] = source.split('#');
         const [importPath, params] = withoutHash.split('?');
 
-        const relativeImport = importPath.startsWith('.') || importPath.startsWith('/');
+        const relativeImport =
+          importPath.startsWith('.') || importPath.startsWith('/');
         const jsFileImport = fileExtensions.includes(extname(importPath));
         // for performance, don't resolve relative imports of js files. we only do this for js files,
         // because an import like ./foo/bar.css might actually need to resolve to ./foo/bar.css.js
@@ -89,16 +97,15 @@ module.exports = {
         if (source.includes('@dynatrace')) {
           const resolved = resolveModulePath(source, moduleMappings, '.mjs');
           return toBrowserPath(`/${relative(process.cwd(), resolved)}`);
-          // console.log(resolved, relative(process.cwd(), resolved));
-          // if undefined it might be a published @dynatrace import that has to be resolved
-          // via the node_modules with the `sync` operation later on
-          if (resolved) {
-            return resolved;
-          }
         }
 
-        const requestedFile = context.path.endsWith('/') ? `${context.path}index.html` : context.path;
-        const fileUrl = new URL(`.${requestedFile}`, `${pathToFileURL(process.cwd())}/`);
+        const requestedFile = context.path.endsWith('/')
+          ? `${context.path}index.html`
+          : context.path;
+        const fileUrl = new URL(
+          `.${requestedFile}`,
+          `${pathToFileURL(process.cwd())}/`,
+        );
         const filePath = fileURLToPath(fileUrl);
 
         // do the actual resolve using the rolluo plugin
@@ -127,15 +134,22 @@ module.exports = {
           );
         }
 
-        const resolveRelativeTo = extname(filePath) ? dirname(filePath) : filePath;
-        const relativeImportFilePath = relative(resolveRelativeTo, resolvedImportFilePath);
+        const resolveRelativeTo = extname(filePath)
+          ? dirname(filePath)
+          : filePath;
+        const relativeImportFilePath = relative(
+          resolveRelativeTo,
+          resolvedImportFilePath,
+        );
         const suffix = `${params ? `?${params}` : ''}${hash ? `#${hash}` : ''}`;
-        const resolvedImportPath = `${toBrowserPath(relativeImportFilePath)}${suffix}`;
+        const resolvedImportPath = `${toBrowserPath(
+          relativeImportFilePath,
+        )}${suffix}`;
 
-        return resolvedImportPath.startsWith('/') || resolvedImportPath.startsWith('.')
+        return resolvedImportPath.startsWith('/') ||
+          resolvedImportPath.startsWith('.')
           ? resolvedImportPath
           : `./${resolvedImportPath}`;
-
       },
     },
   ],
