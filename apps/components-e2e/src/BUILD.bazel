@@ -69,7 +69,6 @@ dev_server(
     name = "devserver",
     assets = [
         ":styles.css",
-        # ":app_fonts",
         "@npm//:node_modules/zone.js/dist/zone.min.js",
     ],
     entry_module = "dynatrace/apps/components-e2e/src/main.dev",

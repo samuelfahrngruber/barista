@@ -5,6 +5,8 @@ load("@npm//html-insert-assets:index.bzl", "html_insert_assets")
 
 package(default_visibility = ["//:__subpackages__"])
 
+exports_files(["devserver-config.js"])
+
 # Provides named UMD shims for `rxjs/operators` and `rxjs/testing`.
 # should be included in the "scripts" of a "ts_devserver"
 # rule and the "deps" of a "ts_web_test_suite" rule.
