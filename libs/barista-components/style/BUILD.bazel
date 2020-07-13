@@ -1,7 +1,7 @@
 load("//tools/bazel_rules:index.bzl", "stylelint")
 load("@io_bazel_rules_sass//:defs.bzl", "sass_binary", "sass_library")
 
-package(default_visibility = ["//:__subpackages__"])
+package(default_visibility = ["//visibility:public"])
 
 sass_library(
     name = "style",
@@ -18,8 +18,8 @@ sass_library(
 sass_library(
     name = "angular_cdk",
     srcs = [
-        "@npm//:node_modules/@angular/cdk/a11y/_a11y.scss",
-        "@npm//:node_modules/@angular/cdk/overlay/_overlay.scss",
+        "@npm//:node_modules/@angular/cdk/_a11y.scss",
+        "@npm//:node_modules/@angular/cdk/_overlay.scss",
     ],
 )
 
@@ -33,9 +33,7 @@ sass_library(
 sass_binary(
     name = "index",
     src = "index.scss",
-    include_paths = [
-        "external/npm/",
-    ],
+    include_paths = ["external/npm/node_modules"],
     deps = [
         ":barista_font",
         ":style",

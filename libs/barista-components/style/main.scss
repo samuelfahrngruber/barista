@@ -12,8 +12,8 @@
 
 @import './themes';
 
-@import 'node_modules/@angular/cdk/overlay';
-@import 'node_modules/@angular/cdk/a11y';
+@import '@angular/cdk/overlay';
+@import '@angular/cdk/a11y';
 
 @include cdk-a11y();
 @include cdk-overlay();

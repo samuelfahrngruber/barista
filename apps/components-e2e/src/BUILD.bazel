@@ -5,6 +5,7 @@ package(default_visibility = ["//apps/components-e2e:__subpackages__"])
 
 ASSETS = [
     ":styles.css",
+    ":core_styles",
     "@npm//:node_modules/zone.js/dist/zone.min.js",
     #   {
     #     "glob": "**",
@@ -31,7 +32,9 @@ ASSETS = [
 sass_binary(
     name = "styles",
     src = "main.scss",
+    include_paths = ["external/npm/node_modules"],
     output_name = "styles.css",
+    deps = ["//libs/barista-components/style"],
 )
 
 ng_module(
@@ -66,7 +69,7 @@ dev_server(
     name = "devserver",
     assets = [
         ":styles.css",
-        ":app_styles",
+        # ":app_fonts",
         "@npm//:node_modules/zone.js/dist/zone.min.js",
     ],
     entry_module = "dynatrace/apps/components-e2e/src/main.dev",
