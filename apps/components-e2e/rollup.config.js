@@ -6,15 +6,7 @@ export default (args) => {
     plugins: [
       resolve({
         preferBuiltins: true,
-        mainFields: [
-          'es2015',
-          'module',
-          'browser',
-          'jsnext',
-          'jsnext:main',
-          'main',
-        ],
-        extensions: ['.mjs', '.js'],
+        mainFields: ['browser', 'es2015', 'module', 'jsnext:main', 'main'],
       }),
       commonjs(),
     ],

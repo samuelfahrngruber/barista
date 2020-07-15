@@ -1,4 +1,4 @@
-load("//tools/bazel_rules:index.bzl", "ng_module")
+load("//tools/bazel_rules:index.bzl", "ng_module", "rollup")
 load("@io_bazel_rules_sass//:defs.bzl", "sass_binary")
 load("@npm//@bazel/typescript:index.bzl", "ts_devserver")
 
@@ -50,3 +50,44 @@ ts_devserver(
         "@npm//@dynatrace/barista-icons",
     ],
 )
+
+# rollup(
+#     name = "bundle-es2015",
+#     assets = [],
+#     entry_point = {
+#         "main.prod.ts": "bundle-es2015.js"
+#     },
+#     deps = [":src"],
+# )
+
+# load("//packages/rollup:index.bzl", "rollup_bundle")
+load("@npm//@bazel/rollup:index.bzl", "rollup_bundle")
+
+rollup_bundle(
+    name = "bundle-es2015",
+    srcs = [":src"],
+    output_dir = True,
+    entry_points = {
+        "main.prod.mjs": "bundle-es2015"
+    },
+    config_file = "//apps/components-e2e:rollup.config.js",
+)
+
+    # "//apps/components-e2e/src/components/icon",
+    # "//apps/components-e2e/src/components/button",
+    # "//apps/components-e2e/src/components/button-group",
+# rollup_bundle(
+#     name = "bundle-es2015",
+#     config_file = "rollup.config.js",
+#     entry_points = {
+#         ":main.prod.ts": "index",
+#     },
+#     output_dir = True,
+#     tags = ["prod-showcase"],
+#     deps = [
+#         "//src/showcase",
+#         "@npm//@rollup/plugin-alias",
+#         "@npm//rollup-plugin-commonjs",
+#         "@npm//rollup-plugin-node-resolve",
+#     ],
+# )

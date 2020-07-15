@@ -3,6 +3,8 @@ load("//tools/bazel_rules:index.bzl", "stylelint")
 
 package(default_visibility = ["//apps/components-e2e:__subpackages__"])
 
+exports_files(["rollup.config.js"])
+
 stylelint(
     name = "stylelint",
     srcs = glob(["**/*.scss"]) + [":.stylelintrc"],
