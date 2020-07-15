@@ -33,17 +33,24 @@ def dev_server_macro(
         serving_path = "/bundle.js",
         additional_root_paths = [
             "npm/node_modules",
+            "npm/node_modules/@dynatrace/barista-fonts",
+            # "e2e_ts_devserver/genrule/devserver/",
         ],
         scripts = [
             "@npm//:node_modules/tslib/tslib.js",
             "//tools/bazel_rules/dev_server:rxjs_umd_modules",
-            "//tools/bazel_rules/dev_server:devserver-config.js",
+            # "//tools/bazel_rules/dev_server:devserver-config.js",
         ],
         static_files = assets + [
             ":%s" % insert_assets_name,
+            # "@npm//:node_modules/@dynatrace/barista-icons",
             template,
         ] + native.glob([
             "node_modules/@dynatrace/barista-fonts/fonts/**",
         ]),
-        deps = deps,
+        deps = deps + [
+            "@npm//@dynatrace/barista-fonts",
+            "@npm//@dynatrace/barista-icons",
+
+        ],
     )

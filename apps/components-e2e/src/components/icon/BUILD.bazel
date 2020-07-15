@@ -2,22 +2,21 @@ load("//tools/bazel_rules:index.bzl", "ng_module")
 
 package(default_visibility = ["//apps/components-e2e:__subpackages__"])
 
-ROUTES = [
-    "//apps/components-e2e/src/components/icon",
-    "//apps/components-e2e/src/components/button",
-    "//apps/components-e2e/src/components/button-group",
-]
-
 ng_module(
-    name = "app",
-    srcs = glob(["*.ts"]),
+    name = "icon",
+    srcs = glob(
+        include = ["*.ts"],
+        exclude = [
+            "*.po.ts",
+            "*.e2e.ts",
+        ],
+    ),
+    angular_assets = ["icon.html"],
     tsconfig = "//apps/components-e2e:tsconfig-app",
-    deps = ROUTES + [
+    deps = [
         "//libs/barista-components/icon:compile",
         "@npm//@angular/common",
         "@npm//@angular/core",
-        "@npm//@angular/forms",
-        "@npm//@angular/platform-browser",
         "@npm//@angular/router",
     ],
 )

@@ -1,33 +1,8 @@
-load("//tools/bazel_rules:index.bzl", "dev_server", "ng_module")
+load("//tools/bazel_rules:index.bzl", "ng_module")
 load("@io_bazel_rules_sass//:defs.bzl", "sass_binary")
+load("@npm//@bazel/typescript:index.bzl", "ts_devserver")
 
 package(default_visibility = ["//apps/components-e2e:__subpackages__"])
-
-ASSETS = [
-    ":styles.css",
-    ":core_styles",
-    "@npm//:node_modules/zone.js/dist/zone.min.js",
-    #   {
-    #     "glob": "**",
-    #     "input": "libs/barista-components/assets",
-    #     "output": "/assets"
-    #   },
-    #   {
-    #     "glob": "**",
-    #     "input": "apps/components-e2e/src/fixtures",
-    #     "output": "/fixtures"
-    #   },
-    #   {
-    #     "glob": "*.svg",
-    #     "input": "node_modules/@dynatrace/barista-icons",
-    #     "output": "/assets/icons"
-    #   },
-    #   {
-    #     "glob": "**/*",
-    #     "input": "node_modules/@dynatrace/barista-fonts/fonts/",
-    #     "output": "/fonts"
-    #   }
-]
 
 sass_binary(
     name = "styles",
@@ -51,27 +26,27 @@ ng_module(
     ],
 )
 
-filegroup(
-    name = "app_styles",
-    srcs = [
-        "//libs/barista-components/style:index.css",
-    ],
-)
-
-filegroup(
-    name = "app_fonts",
-    srcs = glob([
-        "node_modules/@dynatrace/barista-fonts/fonts/**",
-    ]),
-)
-
-dev_server(
+ts_devserver(
     name = "devserver",
-    assets = [
+    additional_root_paths = [
+        "npm/node_modules",
+        "npm/node_modules/@dynatrace/barista-fonts",
+    ],
+    entry_module = "dynatrace/apps/components-e2e/src/main.dev",
+    port = 4200,
+    scripts = [
+        "@npm//:node_modules/tslib/tslib.js",
+        "//tools/bazel_rules/dev_server:rxjs_umd_modules",
+    ],
+    serving_path = "/bundle.js",
+    static_files = [
+        ":index.html",
         ":styles.css",
         "@npm//:node_modules/zone.js/dist/zone.min.js",
     ],
-    entry_module = "dynatrace/apps/components-e2e/src/main.dev",
-    template = ":index.dev.html",
-    deps = [":src"],
+    deps = [
+        ":src",
+        "@npm//@dynatrace/barista-fonts",
+        "@npm//@dynatrace/barista-icons",
+    ],
 )

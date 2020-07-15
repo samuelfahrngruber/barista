@@ -14,27 +14,18 @@
  * limitations under the License.
  */
 
-import { HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { Route, RouterModule } from '@angular/router';
 import { DtIconModule } from '@dynatrace/barista-components/icon';
-import { DtE2EApp } from './app.component';
-import { AppRoutingModule } from './app.routing.module';
+import { DtE2EIcon } from './icon';
+
+const routes: Route[] = [{ path: '', component: DtE2EIcon }];
 
 @NgModule({
-  declarations: [DtE2EApp],
-  imports: [
-    BrowserModule,
-    NoopAnimationsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    DtIconModule.forRoot({
-      svgIconLocation: '@dynatrace/barista-icons/{{name}}.svg',
-    }),
-    AppRoutingModule,
-  ],
-  bootstrap: [DtE2EApp],
+  declarations: [DtE2EIcon],
+  imports: [CommonModule, RouterModule.forChild(routes), DtIconModule],
+  exports: [],
+  providers: [],
 })
-export class DtE2EAppModule {}
+export class DtE2EIconModule {}

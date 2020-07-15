@@ -27,6 +27,13 @@ export const routes: Routes = [
   //     ),
   // },
   {
+    path: 'icon',
+    loadChildren: () =>
+      import('../components/icon/icon.module').then(
+        (module) => module.DtE2EIconModule,
+      ),
+  },
+  {
     path: 'button',
     loadChildren: () =>
       import('../components/button/button.module').then(
