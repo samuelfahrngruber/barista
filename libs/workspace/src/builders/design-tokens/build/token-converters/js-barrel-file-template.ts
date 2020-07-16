@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { generateHeaderNoticeComment } from '../utils';
 
-export const LICENSE_HEADER = `/**
+import { EOL } from 'os';
+import { generateHeaderNoticeComment } from '../utils/generate-header-notice-comment';
+
+export const ecmascriptBarrelFileTemplate = (files: string[]) => `/**
  * @license
  * Copyright 2020 Dynatrace LLC
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,16 +31,9 @@ export const LICENSE_HEADER = `/**
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */`;
-
-export const dtDesignTokensTypescriptConverter = `${LICENSE_HEADER}
+ */
 
 ${generateHeaderNoticeComment()}
 
-{{#each props as |prop|}}
-{{#if prop.comment}}
-{{{trimLeft (indent (comment (trim prop.comment)))}}}
-{{/if}}
-export const {{uppercase (snakecase prop.name)}} = '{{{prop.value}}}';
-{{/each}}
+${files.map((file) => `export * from '${file}';`).join(EOL)}
 `;

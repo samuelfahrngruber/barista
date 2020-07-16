@@ -19,26 +19,34 @@ import { ImmutableStyleMap, Prop } from 'theo';
 /**
  * Generate a scss typography mixin for the typography set.
  */
-function generateScssMixinForProp(prop: Prop): string {
+function generateJavascriptFunctionForProp(prop: Prop): string {
+  const functionName = prop
+    .getIn(['meta', 'mixinName'])
+    .split('-')
+    .map((part) => `${part.slice(0, 1).toUpperCase()}${part.slice(1)}`)
+    .join('');
+
   return `
 ${renderComment(prop)}
-@mixin fluid-${prop.getIn(['meta', 'mixinName'])}() {
-  font-family: ${prop.getIn(['value', 'fontFamily'])};
-  font-size: ${prop.getIn(['value', 'fontSize'])};
-  font-weight: ${prop.getIn(['value', 'fontWeight'])};
-  line-height: ${prop.getIn(['value', 'lineHeight'])};
-  text-transform: ${prop.getIn(['value', 'textTransform'])};
+export function fluid${functionName}() {
+  return \`
+    font-family: ${prop.getIn(['value', 'fontFamily'])};
+    font-size: ${prop.getIn(['value', 'fontSize'])};
+    font-weight: ${prop.getIn(['value', 'fontWeight'])};
+    line-height: ${prop.getIn(['value', 'lineHeight'])};
+    text-transform: ${prop.getIn(['value', 'textTransform'])};
+  \`;
 }
 `;
 }
 
 /** Generates a mixin for all defined tokens within in scss format. */
-export function dtDesignTokensScssTypographyConverter(
+export function dtDesignTokensJavascriptTypographyConverter(
   results: ImmutableStyleMap,
 ): string {
   return [
     generateHeaderNoticeComment(),
     '\n',
-    ...results.get('props').map(generateScssMixinForProp).toJS(),
+    ...results.get('props').map(generateJavascriptFunctionForProp).toJS(),
   ].join('\n');
 }

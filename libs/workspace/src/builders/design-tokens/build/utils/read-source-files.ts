@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-export * from './dt-scss';
-export * from './dt-scss-theme';
-export * from './dt-scss-typography';
-export * from './dt-css-typography';
-export * from './dt-css-spacing';
-export * from './dt-typescript';
-export * from './dt-typescript-theme';
-export * from './dt-typescript-typography';
-export * from './dt-javascript';
-export * from './js-barrel-file-template';
-export * from './ts-barrel-file-template';
+import { sync as globSync } from 'glob';
+import { Observable, of } from 'rxjs';
+/**
+ * Globs over all entrypoint patterns, finds the files that should be processed.
+ * @param entrypoints - Globbing pattern of all entry points.
+ * @param cwd - Relative directory that is used as a root for the globbing patterns.
+ */
+export function readSourceFiles(
+  entrypoints: string[],
+  cwd: string,
+): Observable<string[]> {
+  const entrypointFiles: string[] = [];
+  for (const globPattern of entrypoints) {
+    entrypointFiles.push(...globSync(globPattern, { cwd }));
+  }
+  return of(entrypointFiles);
+}

@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-export * from './dt-scss';
-export * from './dt-scss-theme';
-export * from './dt-scss-typography';
-export * from './dt-css-typography';
-export * from './dt-css-spacing';
-export * from './dt-typescript';
-export * from './dt-typescript-theme';
-export * from './dt-typescript-typography';
-export * from './dt-javascript';
-export * from './js-barrel-file-template';
-export * from './ts-barrel-file-template';
+export * from './generate-barrel-files';
+export * from './generate-color-palette';
+export * from './generate-header-notice-comment';
+export * from './read-source-files';
+export * from './add-alias-metadata-files';
+export * from './render-comment';
