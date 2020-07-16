@@ -5,9 +5,9 @@ package(default_visibility = ["//apps/components-e2e:__subpackages__"])
 
 exports_files(["rollup.config.js"])
 
-stylelint(
-    name = "stylelint",
-    srcs = glob(["**/*.scss"]) + [":.stylelintrc"],
+alias(
+    name = "components-e2e",
+    actual = "//apps/components-e2e/src:prodapp",
 )
 
 # should be run with `ibazel run //apps/components-e2e:serve`
@@ -23,4 +23,9 @@ ts_config(
         ":tsconfig.json",
         "//:tsconfig.json",
     ],
+)
+
+stylelint(
+    name = "stylelint",
+    srcs = glob(["**/*.scss"]) + [":.stylelintrc"],
 )

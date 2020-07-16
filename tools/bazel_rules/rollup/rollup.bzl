@@ -31,7 +31,7 @@ npm_deps_aspect = aspect(
 def _write_rollup_config(ctx, substitutions = {}):
     config = ctx.actions.declare_file("_%s.rollup_config.js" % ctx.label.name)
     ctx.actions.expand_template(
-        template = ctx.file._rollup_config,
+        template = ctx.file.rollup_config,
         output = config,
         substitutions = substitutions,
     )
@@ -48,10 +48,9 @@ def _get_entry_point(files, entry_point, root):
     return (join([root, src.path.rpartition(".")[0] + ".mjs"]), name)
 
 def _rollup_impl(ctx):
-    bundle_name = "builder"
-
     # the Rule outputs
-    outputs = []
+    outputs = [getattr(ctx.outputs, o) for o in dir(ctx.outputs)]
+    output_dir = ctx.actions.declare_directory(ctx.label.name)
 
     # the node module dependencies for rollup like node-resolve
     node_modules_files = []
@@ -71,6 +70,7 @@ def _rollup_impl(ctx):
         if NpmPackageInfo in dep:
             node_modules_files.extend(filter_files(dep[NpmPackageInfo].sources, [".js", ".json"]))
 
+        # TODO: lukas.holzer check for JsModuleInfo provider the ecmaScript one is deprecated
         if JSEcmaScriptModuleInfo in dep:
             files.extend(filter_files(dep[JSEcmaScriptModuleInfo].sources, [".mjs"]))
 
@@ -81,34 +81,43 @@ def _rollup_impl(ctx):
     entry = _get_entry_point(files, ctx.attr.entry_point, ctx.bin_dir.path)
 
     rollup_inputs = files + node_modules_files
-    rollup_output = ctx.actions.declare_file(entry[1])
-    outputs.append(rollup_output)
+
+
+    outputs.append(output_dir)
+    # rollup_output = ctx.actions.declare_file(entry[1])
+    # outputs.append(rollup_output)
     rollup_config = _write_rollup_config(ctx)
 
     rollup_inputs.append(rollup_config)
-
-    # use rollup cli flags https://github.com/rollup/rollup/blob/master/docs/999-big-list-of-options.md
-    rollup_args = [] + ctx.attr.args
-
-    rollup_args.extend(["--config", rollup_config.path])
-    rollup_args.extend(["--input", entry[0]])
-    rollup_args.extend(["--output.file", rollup_output.path])
-    rollup_args.extend(["--format", "cjs"])
-    rollup_args.extend(["--external", join(rollup_globals, ",")])
 
     # Prevent rollup's module resolver from hopping outside Bazel's sandbox
     # When set to false, symbolic links are followed when resolving a file.
     # When set to true, instead of being followed, symbolic links are treated as if the file is
     # where the link is.
-    rollup_args.append("--preserveSymlinks")
+    # use rollup cli flags https://github.com/rollup/rollup/blob/master/docs/999-big-list-of-options.md
+    rollup_args = ["--preserveSymlinks"] + ctx.attr.args
+
+    rollup_args.extend(["--config", rollup_config.path])
+    
+
+    # rollup_args.extend(["--input", entry[0]])
+    # rollup_args.extend(["--output.file", rollup_output.path])
+    # rollup_args.extend(["--format", "cjs"])
+    # rollup_args.extend(["--external", join(rollup_globals, ",")])
 
     run_node(
         ctx = ctx,
         inputs = rollup_inputs,
         executable = "_rollup_bin",
-        outputs = [rollup_output],
+        outputs = outputs,
         arguments = rollup_args,
         mnemonic = "Rollup",
+        env = {
+            "ROLLUP_BASE_DIR":  output_dir.dirname,
+            "ROLLUP_OUTPUT_DIR":  output_dir.path,
+            "ROLLUP_INPUT_FILE":  entry[0],
+        },
+        
         progress_message = "Creating Rollup bundle",
     )
 
@@ -123,7 +132,7 @@ rollup = rule(
             cfg = "host",
             default = "@npm//rollup/bin:rollup",
         ),
-        "_rollup_config": attr.label(
+        "rollup_config": attr.label(
             default = Label("//tools/bazel_rules/rollup:rollup.config.js"),
             allow_single_file = True,
         ),
