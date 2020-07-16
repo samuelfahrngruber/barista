@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-export interface PackageJson {
-  version?: string;
-  peerDependencies?: {
-    [key: string]: string;
-  };
-  dependencies?: {
-    [key: string]: string;
-  };
-  devDependencies?: {
-    [key: string]: string;
-  };
-  license?: string;
-  author?: string;
-  main?: string;
-  module?: string;
-  typings?: string;
+/** The options that can be used with the elements builder */
+export interface ElementsPackageOptions {
+  /** Entrypoint for the rollup bundler */
+  entryFile: string;
+  /** The path to the package.json used for the release. */
+  project: string;
+  /** The path where the elements target should built to. */
+  outputPath: string;
+  /** Package version that is used in the release */
+  packageVersion: string;
 }

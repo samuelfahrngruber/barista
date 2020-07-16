@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-export interface PackageJson {
-  version?: string;
-  peerDependencies?: {
-    [key: string]: string;
-  };
-  dependencies?: {
-    [key: string]: string;
-  };
-  devDependencies?: {
-    [key: string]: string;
-  };
-  license?: string;
-  author?: string;
-  main?: string;
-  module?: string;
-  typings?: string;
-}
+import { createBuilder } from '@angular-devkit/architect';
+import { JsonObject } from '@angular-devkit/core';
+import { elementsPackageBuilder } from './build';
+import { ElementsPackageOptions } from './schema';
+
+export default createBuilder<ElementsPackageOptions & JsonObject>(
+  elementsPackageBuilder,
+);

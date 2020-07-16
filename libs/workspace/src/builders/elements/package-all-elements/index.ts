@@ -16,7 +16,9 @@
 
 import { createBuilder } from '@angular-devkit/architect';
 import { JsonObject } from '@angular-devkit/core';
-import { elementsBuilder } from './build';
-import { ElementsOptions } from './schema';
+import { elementsBuildAndPackageBuilder } from './build';
+import { ElementsPackageAllOptions } from './schema';
 
-export default createBuilder<ElementsOptions & JsonObject>(elementsBuilder);
+export default createBuilder<ElementsPackageAllOptions & JsonObject>(
+  elementsBuildAndPackageBuilder,
+);
