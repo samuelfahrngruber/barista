@@ -14,5 +14,20 @@
  * limitations under the License.
  */
 
-export * from './lib/checkbox';
-export * from './lib/checkbox-events';
+/**
+ * Custom event implementation that mimics a native change event.
+ */
+export class FluidCheckboxChangeEvent extends CustomEvent<any> {
+  constructor(public checked: boolean) {
+    super('change', { bubbles: true, composed: true });
+  }
+}
+
+/**
+ * Custom event implementation for the IndeterminateChange event.
+ */
+export class FluidCheckboxIndeterminateChangeEvent extends CustomEvent<any> {
+  constructor(public checked: boolean) {
+    super('indeterminateChange', { bubbles: true, composed: true });
+  }
+}

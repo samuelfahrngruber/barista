@@ -15,7 +15,7 @@
  */
 
 import { FluidTabGroup } from './tab-group';
-import { FluidTab } from './tab/tab';
+import { FluidTab } from '../tab/tab';
 
 function tick(): Promise<void> {
   return Promise.resolve();

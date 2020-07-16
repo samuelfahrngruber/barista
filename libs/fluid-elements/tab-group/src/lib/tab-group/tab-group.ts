@@ -20,28 +20,56 @@ import {
   TemplateResult,
   html,
   property,
+  css,
+  unsafeCSS,
+  customElement,
 } from 'lit-element';
-import styles from './tab-group.scss';
-import { FluidTab } from './tab/tab';
+
+import { FluidTab } from '../tab/tab';
 import {
   FluidTabActivatedEvent,
   FluidTabDisabledEvent,
   FluidTabGroupActiveTabChanged,
-} from '../utils/tab-events';
+} from '../tab-events';
+import {
+  FLUID_SPACING_SMALL,
+  FLUID_SPACING_0,
+  FLUID_SPACING_MEDIUM,
+} from '@dynatrace/fluid-design-tokens';
 
 /**
  * This is a experimental version of the tab group component
  * It registers itself as `fluid-tab-group` custom element.
- * @element fluid-tag-group
+ * @element fluid-tab-group
  * @slot - Default slot lets the user provide a group of fluid-tabs.
  */
+@customElement('fluid-tab-group')
 export class FluidTabGroup extends LitElement {
   /** Array of referrences to the fluid-tabs */
   private tabChildren: FluidTab[];
 
   /** Styles for the tab list component */
   static get styles(): CSSResult {
-    return styles;
+    return css`
+      :host {
+        /**
+        * Legibility definitions should probably be
+        * shipped or imported from a core
+        */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+      }
+
+      .fluid-tab-group {
+        color: var(--color-maxcontrast);
+        margin-block-start: ${unsafeCSS(FLUID_SPACING_SMALL)};
+        margin-block-end: ${unsafeCSS(FLUID_SPACING_SMALL)};
+        margin-inline-start: ${unsafeCSS(FLUID_SPACING_0)};
+        margin-inline-end: ${unsafeCSS(FLUID_SPACING_0)};
+        padding-inline-start: ${unsafeCSS(FLUID_SPACING_MEDIUM)};
+      }
+    `;
   }
 
   /**
@@ -105,7 +133,6 @@ export class FluidTabGroup extends LitElement {
       this.tabChildren[index].tabindex = 0;
       this.tabChildren[oldIndex].tabindex = -1;
       this.activetabid = this.tabChildren[index].tabid;
-      console.log(this.tabChildren);
     }
   }
 
@@ -152,8 +179,4 @@ export class FluidTabGroup extends LitElement {
       </div>
     `;
   }
-}
-
-if (!customElements.get('fluid-tab-group')) {
-  customElements.define('fluid-tab-group', FluidTabGroup);
 }
