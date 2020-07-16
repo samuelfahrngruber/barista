@@ -20,8 +20,13 @@
  * TO GENERATE THESE FILES RUN 'ng build shared-design-tokens'
  */
 
-export * from './global/palette';
-export * from './global/spacing';
-export * from './global/theme';
-export * from './global/typography';
-export * from './patterns/button';
+export const FLUID_SPACING_0 = '0';
+export const FLUID_SPACING_3X_SMALL = '2px';
+export const FLUID_SPACING_2X_SMALL = '4px';
+export const FLUID_SPACING_X_SMALL = '8px';
+export const FLUID_SPACING_SMALL = '12px';
+export const FLUID_SPACING_MEDIUM = '16px';
+export const FLUID_SPACING_LARGE = '32px';
+export const FLUID_SPACING_X_LARGE = '48px';
+export const FLUID_SPACING_2X_LARGE = '64px';
+export const FLUID_SPACING_3X_LARGE = '128px';

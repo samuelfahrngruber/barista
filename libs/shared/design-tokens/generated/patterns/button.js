@@ -20,8 +20,6 @@
  * TO GENERATE THESE FILES RUN 'ng build shared-design-tokens'
  */
 
-export * from './global/palette';
-export * from './global/spacing';
-export * from './global/theme';
-export * from './global/typography';
-export * from './patterns/button';
+export const FLUID_BUTTON_PADDING_SMALL = '8px 48px';
+export const FLUID_BUTTON_PADDING_MEDIUM = '12px 48px';
+export const FLUID_BUTTON_PADDING_LARGE = '16px 48px';
