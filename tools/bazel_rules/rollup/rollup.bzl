@@ -98,7 +98,7 @@ def _rollup_impl(ctx):
     rollup_args = ["--preserveSymlinks"] + ctx.attr.args
 
     rollup_args.extend(["--config", rollup_config.path])
-    
+
 
     # rollup_args.extend(["--input", entry[0]])
     # rollup_args.extend(["--output.file", rollup_output.path])
@@ -117,7 +117,7 @@ def _rollup_impl(ctx):
             "ROLLUP_OUTPUT_DIR":  output_dir.path,
             "ROLLUP_INPUT_FILE":  entry[0],
         },
-        
+
         progress_message = "Creating Rollup bundle",
     )
 

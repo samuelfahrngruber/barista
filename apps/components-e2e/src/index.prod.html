@@ -5,9 +5,14 @@
     <title>Dynatrace Angular Components</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <dt-e2e-app>Loading Application...</dt-e2e-app>
+    <!--
+    <script src="/bundle.js"></script> -->
+    <script src="./zone.js/dist/zone.min.js"></script>
+    <script src="./bundle/es2015/main.prod-es2015.js" type="module"></script>
+    <script src="./bundle/es5/main.prod-es2015.js" nomodule defer></script>
   </body>
 </html>

@@ -13,7 +13,7 @@ build --symlink_prefix=dist/
 
 # Use the Angular Ivy compiler
 # See https://github.com/angular/angular/blob/master/docs/BAZEL.md#various-flags-used-for-tests
-# build --define=angular_ivy_enabled=True
+build --define=angular_ivy_enabled=True
 
 # When running `bazel coverage` --instrument_test_targets needs to be set in order to
 # collect coverage information from test targets
