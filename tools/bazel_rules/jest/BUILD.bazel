@@ -3,3 +3,11 @@ load("@npm//@bazel/typescript:index.bzl", "ts_config", "ts_library")
 package(default_visibility = ["//:__subpackages__"])
 
 exports_files(["jest-runner.js", "jest-resolver.js"])
+
+ts_config(
+    name = "tsconfig_jest_default",
+    src = "tsconfig.default.json",
+    deps = [
+        "//:tsconfig.json",
+    ],
+)

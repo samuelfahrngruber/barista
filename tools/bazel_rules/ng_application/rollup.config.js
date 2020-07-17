@@ -5,7 +5,7 @@ import { writeFileSync } from 'fs';
 import { getBabelOutputPlugin } from '@rollup/plugin-babel';
 import optimizer from '@angular-devkit/build-optimizer/src/build-optimizer/rollup-plugin';
 import {} from '@angular-devkit/build-optimizer';
-import { terser } from 'rollup-plugin-terser';
+import { terser } from 'rollup-plugin-terser';\ d
 
 const BASE_DIR = process.env.ROLLUP_BASE_DIR;
 const OUTPUT_PATH = process.env.ROLLUP_OUTPUT_DIR;
@@ -68,8 +68,8 @@ export default (args) => {
       NodeResolve({
         preferBuiltins: true,
         mainFields: [
-          // 'module_ivy_ngcc',
-          // 'main_ivy_ngcc',
+          'module_ivy_ngcc',
+          'main_ivy_ngcc',
           'browser',
           'es2015',
           'module',

@@ -36,7 +36,7 @@ function updateJestConfig(configPath, suiteName, suitePath) {
 }
 
 async function main() {
-  const { jestConfig, setupFile, files, suite, test } = argv;
+  const { jestConfig, setupFile, files, suite } = argv;
   const jestConfigPath = updateJestConfig(
     resolve(jestConfig),
     suite,
@@ -45,14 +45,18 @@ async function main() {
   const base = dirname(jestConfigPath);
 
   process.env.BAZEL_TEST_MODULE_MAPPING = join(
-    dirname(jestConfig),
+    base,
     `_${suite}.module_mappings.json`,
   );
 
   const resolvedFiles = files
     .split(',')
     .map((source) => join(base, source).replace(/ts$/, 'js'));
-  const testSetupFile = resolve(setupFile).replace(/ts$/, 'js');
+
+  const setupFilesAfterEnv = [];
+  if (setupFile) {
+    setupFilesAfterEnv.push(resolve(setupFile).replace(/ts$/, 'js'));
+  }
 
   const { results } = await runCLI(
     {
@@ -66,7 +70,7 @@ async function main() {
       resolver: resolve('tools/bazel_rules/jest/jest-resolver.js'),
       rootDir: resolve('./'),
       colors: false,
-      setupFilesAfterEnv: [testSetupFile],
+      setupFilesAfterEnv,
     },
     [jestConfigPath],
   );
