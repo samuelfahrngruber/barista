@@ -6,7 +6,6 @@ import { getBabelOutputPlugin } from '@rollup/plugin-babel';
 import optimizer from '@angular-devkit/build-optimizer/src/build-optimizer/rollup-plugin';
 import {} from '@angular-devkit/build-optimizer';
 import { terser } from 'rollup-plugin-terser';
-import html from '@open-wc/rollup-plugin-html';
 
 const BASE_DIR = process.env.ROLLUP_BASE_DIR;
 const OUTPUT_PATH = process.env.ROLLUP_OUTPUT_DIR;
@@ -33,7 +32,9 @@ function rollupIndexFileGeneration() {
       const chunk = Object.values(bundle)[0];
       if (chunk.isEntry) {
         BUNDLES.push({
-          module: options.esModule || false,
+          // legacy es5 will be processed with babel
+          legacy:
+            options.plugins.findIndex(({ name }) => name === 'babel') > -1,
           dir: options.dir,
           name: chunk.fileName,
         });
@@ -58,10 +59,10 @@ export default (args) => {
   return {
     input: INPUT_FILE,
     // https://rollupjs.org/guide/en/#preserveentrysignatures
-    preserveEntrySignatures: false,
+    // preserveEntrySignatures: false,
     output: [
-      ...generateBundles(false, ['es2015']),
-      // ...generateBundles(true)
+      // ...generateBundles(false, ['es2015']),
+      ...generateBundles(false),
     ],
     plugins: [
       NodeResolve({
@@ -87,7 +88,6 @@ export default (args) => {
 function generateBundles(minified = true, types = ['es5', 'es2015']) {
   return types.map((type) => {
     const suffix = minified ? '.min' : '';
-    const outputType = type === 'es2015' ? 'modern' : 'legacy';
     const output = {
       chunkFileNames: `[name]-${type}-[hash]${suffix}.js`,
       entryFileNames: `[name]-${type}-[hash]${suffix}.js`,
@@ -117,9 +117,11 @@ function generateIndexHTML(scripts) {
     `<head>` +
     `<meta charset="UTF-8">` +
     `<title>Title</title>` +
+    `<base href="/" />` +
     `<link rel="stylesheet" href="./styles.css" />` +
     `</head>` +
     `<body>` +
+    `<dt-e2e-app>Loading Application...</dt-e2e-app>` +
     `<script src="./zone.js/dist/zone.min.js"></script>` +
     scripts.join('') +
     `</body>` +
@@ -132,17 +134,17 @@ function generateIndexHTML(scripts) {
  * @param {Object} chunk
  * @param {string} chunk.dir Directory of the chunk
  * @param {string} chunk.name Filename of the chunk
- * @param {boolean} chunk.module If the chunk is an ESModule or not
+ * @param {boolean} chunk.legacy If the chunk is compiled with es5 or not
  * @returns {string} Returns the generated Script tag
  */
 function generateScriptTag(chunk) {
   const relativePath = relative(chunk.dir, OUTPUT_PATH);
   const attributes = [`src="${join(relativePath, chunk.name)}"`];
 
-  if (chunk.module) {
-    attributes.push(`type="module"`);
-  } else {
+  if (chunk.legacy) {
     attributes.push('nomodule', 'defer');
+  } else {
+    attributes.push(`type="module"`);
   }
 
   return `<script ${attributes.join(' ')}></script>`;

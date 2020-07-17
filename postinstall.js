@@ -45,7 +45,6 @@ function execCommand(cmd) {
   });
 }
 
-
 main()
   .then(() => {
     console.log('✅ Successfully run postinstall script!');
