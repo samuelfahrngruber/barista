@@ -55,7 +55,7 @@ export function htmlInsertAsset(
     }
   });
 
-  return prettier.format($.html(), { parser: 'html'});
+  return prettier.format($.html(), { parser: 'html' });
 }
 
 /** Generates a link tag out of the asset definition */
@@ -63,7 +63,7 @@ export function generateLinkTag(basePath: string, style: Style): string {
   // Get the relative path to the index.html
   const relativePath = relative(basePath, style.dir);
   const attributes: ElementAttributes = [
-    { rel: 'stylesheet'},
+    { rel: 'stylesheet' },
     { href: join(relativePath, style.fileName) },
   ];
 

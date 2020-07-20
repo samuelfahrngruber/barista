@@ -62,7 +62,7 @@ function resolvePath(moduleId) {
 
   // If we cannot replace the file with a mapping then it might be inside a module without
   // module name so the moduleId will consist out of `dynatrace/path/to/module`
-  return resolveModuleFileName(moduleId.replace('dynatrace/', ''))
+  return resolveModuleFileName(moduleId.replace('dynatrace/', ''));
 }
 
 /**
