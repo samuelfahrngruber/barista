@@ -5,7 +5,7 @@ import { writeFileSync } from 'fs';
 import { getBabelOutputPlugin } from '@rollup/plugin-babel';
 import optimizer from '@angular-devkit/build-optimizer/src/build-optimizer/rollup-plugin';
 import {} from '@angular-devkit/build-optimizer';
-import { terser } from 'rollup-plugin-terser';\ d
+import { terser } from 'rollup-plugin-terser';
 
 const BASE_DIR = process.env.ROLLUP_BASE_DIR;
 const OUTPUT_PATH = process.env.ROLLUP_OUTPUT_DIR;
@@ -60,10 +60,7 @@ export default (args) => {
     input: INPUT_FILE,
     // https://rollupjs.org/guide/en/#preserveentrysignatures
     // preserveEntrySignatures: false,
-    output: [
-      // ...generateBundles(false, ['es2015']),
-      ...generateBundles(false),
-    ],
+    output: [...generateBundles(false)],
     plugins: [
       NodeResolve({
         preferBuiltins: true,
