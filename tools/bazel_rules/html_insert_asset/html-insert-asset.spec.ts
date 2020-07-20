@@ -12,28 +12,31 @@ const html = `<!DOCTYPE html>
   </body>
 </html>`;
 
-
 test('should create a plain script tag', () => {
   const script = generateElement('script', [{ src: 'test.js' }, 'nomodule']);
-  expect(script).toEqual('<script src="test.js" nomodule></script>')
+  expect(script).toEqual('<script src="test.js" nomodule></script>');
 });
 
 test('should create a plain script tag', () => {
-  const scripts = [{
-    type: 'script',
-    dir: '/bundles',
-    fileName: 'main-es2015-43021.min.js',
-    module: true,
-  },{
-    type: 'script',
-    dir: '/bundles/legacy',
-    fileName: 'main-es5-26890.min.js',
-    module: false,
-  },{
-    type: 'style',
-    dir: '/',
-    fileName: 'style.css',
-  }]
+  const scripts = [
+    {
+      type: 'script',
+      dir: '/bundles',
+      fileName: 'main-es2015-43021.min.js',
+      module: true,
+    },
+    {
+      type: 'script',
+      dir: '/bundles/legacy',
+      fileName: 'main-es5-26890.min.js',
+      module: false,
+    },
+    {
+      type: 'style',
+      dir: '/',
+      fileName: 'style.css',
+    },
+  ];
   const script = htmlInsertAsset(html, '/', scripts as any);
   expect(script).toEqual(`<!DOCTYPE html>
 <html>

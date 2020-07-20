@@ -14,7 +14,7 @@ package(default_visibility = ["//apps/components-e2e:__subpackages__"])
 # ts_devserver files from this roots can be requested via /...
 _rootPaths = [
     "npm/node_modules",
-    "npm/node_modules/@dynatrace",
+    # "npm/node_modules/@dynatrace",
     "npm/node_modules/@dynatrace/barista-fonts",
 ]
 
