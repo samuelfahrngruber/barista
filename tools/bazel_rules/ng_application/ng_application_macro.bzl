@@ -27,7 +27,6 @@ def ng_application_macro(
             (entry_point): "main-bundle",
         },
         deps = deps,
-        # data = [":html"],
     )
 
     pkg_web(
@@ -35,9 +34,6 @@ def ng_application_macro(
         srcs = assets + [
             ":%s_bundle" % name,
         ],
-        additional_root_paths = root_paths + [
-            # "$(execpath :%s_bundle)" % name,
-            "apps/components-e2e/src/prodapp_bundle"
-        ],
+        additional_root_paths = root_paths
     )
 
