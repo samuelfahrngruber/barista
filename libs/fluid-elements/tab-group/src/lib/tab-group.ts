@@ -33,6 +33,7 @@ import {
   SPACE,
   ARROW_RIGHT,
   ARROW_LEFT,
+  TAB,
 } from '@dynatrace/shared/keycodes';
 
 /**
@@ -56,42 +57,62 @@ export class FluidTabGroup extends LitElement {
    * @type string
    */
   @property({ type: String, reflect: true })
-  activetabid: string;
+  activeTabId: string;
+
+  /** Contains the tab id that will be activated when the user presses SPACEBAR */
+  private _toBeActiveTab: string;
 
   /** Sets the active tab on click */
   private handleClick(event: FluidTabActivatedEvent): void {
-    if (this.activetabid != event.activeTab) {
-      this.activetabid = event.activeTab;
+    if (this.activeTabId != event.activeTab) {
       for (const tab of this.tabChildren) {
-        tab.active = tab.tabid === this.activetabid;
+        tab.tabindex = -1;
       }
-      this.dispatchEvent(new FluidTabGroupActiveTabChanged(this.activetabid));
+      this.activeTabId = event.activeTab;
+      const tab = this.tabChildren.find(
+        (tab) => tab.tabid === this.activeTabId,
+      )!;
+      tab.active = true;
+      tab.tabindex = 0;
+      this.dispatchEvent(new FluidTabGroupActiveTabChanged(this.activeTabId));
     }
   }
 
   /** Sets the active tab on keydown (ArrowLeft and ArrowRight to select / Enter and Space to confirm) */
-  private handleKeyDown(event: KeyboardEvent): void {
-    // Enter Space controll (validate selection)
+  private handleKeyUp(event: KeyboardEvent): void {
+    // Sets the focus outline when user tabbed into the fluid element
+    if (event.code === TAB) {
+      const tabbed = this.tabChildren.find((tab) => {
+        return tab.tabindex === 0;
+      });
+      tabbed!.tabbed = true;
+    }
+    // Enter Space controll (validate selection). Selects the tab that was previously focused using tab/arrowkeys
     if (event.code === ENTER || event.code === SPACE) {
       // Set all tabs to active false
       for (const tab of this.tabChildren) {
         tab.active = false;
       }
 
-      // Find the tab to be active
+      // Find the tab to be activated
       const activeTab = this.tabChildren.find((tab) => {
-        return this.activetabid === tab.tabid;
+        return this._toBeActiveTab === tab.tabid;
       })!;
 
       activeTab.active = true;
-      this.activetabid = activeTab.tabid;
-      this.dispatchEvent(new FluidTabGroupActiveTabChanged(this.activetabid));
+      this.activeTabId = activeTab.tabid;
+      this._toBeActiveTab = this.activeTabId;
+      this.dispatchEvent(new FluidTabGroupActiveTabChanged(this.activeTabId));
     }
     // Arrow control (navigate tabs)
     if (event.code === ARROW_RIGHT || event.code === ARROW_LEFT) {
       // Loops over to find
+      if (!this._toBeActiveTab) {
+        this._toBeActiveTab = this.activeTabId;
+      }
+
       let index = this.tabChildren.findIndex(
-        (tab: FluidTab) => this.activetabid === tab.tabid,
+        (tab: FluidTab) => this._toBeActiveTab === tab.tabid,
       );
 
       const oldIndex = index;
@@ -107,37 +128,53 @@ export class FluidTabGroup extends LitElement {
         index = this.tabChildren.length - 1;
       }
 
-      this.tabChildren[index].focus();
-      this.tabChildren[index].tabindex = 0;
-      this.tabChildren[oldIndex].tabindex = -1;
-      this.activetabid = this.tabChildren[index].tabid;
+      this.tabChildren[index].tabbed = true;
+      this.tabChildren[index].focusTab();
+      this._toBeActiveTab = this.tabChildren[index].tabid;
+
+      this.tabChildren[oldIndex].tabbed = false;
+    }
+  }
+
+  /** In order to prevent the browser to scroll when the user selects a tab using the spacebar we prevent the default behavior. */
+  private handleKeyDown(event: KeyboardEvent): void {
+    if (event.code === SPACE) {
+      event.preventDefault();
     }
   }
 
   /** Checks whether the next tab is also disabled or not and sets the next not disabled tab as active  */
   private handleDisabled(disableTabEvent: FluidTabDisabledEvent): void {
-    if (this.activetabid === disableTabEvent.disableTab) {
-      const tabToEnable = this.tabChildren.find((tab) => !tab.disabled);
-      if (tabToEnable) {
-        tabToEnable.active = true;
-      }
+    if (this.activeTabId === disableTabEvent.disableTab) {
+      this.setFirstEnabledTabActive();
     }
   }
 
   /** Handles changes in the slot. Initially sets the active item (default is first) */
   private slotchange(): void {
+    let tabChildrenLength;
+    if (this.tabChildren !== undefined) {
+      tabChildrenLength = this.tabChildren.length;
+    }
     this.tabChildren = Array.from(this.querySelectorAll('fluid-tab'));
+    if (
+      !this.tabChildren.find((tab) => tab.tabindex === 0) &&
+      tabChildrenLength > this.tabChildren.length
+    ) {
+      this.setFirstEnabledTabActive();
+    }
+
     // Initially set the first tab to active
-    if (!this.activetabid && this.tabChildren.length > 0) {
+    if (!this.activeTabId && this.tabChildren.length > 0) {
+      // Also sets tabindex to 0
       this.tabChildren[0].active = true;
-      this.activetabid = this.tabChildren[0].tabid;
+      this.activeTabId = this.tabChildren[0].tabid;
+      // Needs to be set initially
+      this._toBeActiveTab = this.activeTabId;
     } else {
       for (const tab of this.tabChildren) {
-        tab.active = tab.tabid === this.activetabid;
+        tab.active = tab.tabid === this.activeTabId;
       }
-    }
-    for (const tab of this.tabChildren) {
-      tab.active = tab.tabid === this.activetabid;
     }
   }
 
@@ -150,12 +187,22 @@ export class FluidTabGroup extends LitElement {
       <div
         class="fluid-tab-group"
         @tabActivated="${this.handleClick}"
+        @keyup="${this.handleKeyUp}"
         @keydown="${this.handleKeyDown}"
         @disabled="${this.handleDisabled}"
       >
         <slot @slotchange="${this.slotchange}"></slot>
       </div>
     `;
+  }
+
+  /** Sets a tab to active but only when one of them is enabled */
+  setFirstEnabledTabActive(): void {
+    const tabToEnable = this.tabChildren.find((tab) => !tab.disabled);
+    if (tabToEnable) {
+      tabToEnable.active = true;
+      this.activeTabId = tabToEnable.tabid;
+    }
   }
 }
 

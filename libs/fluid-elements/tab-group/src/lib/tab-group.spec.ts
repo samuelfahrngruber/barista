@@ -29,6 +29,11 @@ describe('Fluid tab group', () => {
   let keyDownSpy: jest.Mock;
 
   //TODO: Helper functions for getting the correct element to click/keydown
+  function getSpanElementFromFluidTab(): HTMLSpanElement {
+    return fixture
+      .querySelector('fluid-tab:last-child')
+      ?.shadowRoot?.querySelector('span')!;
+  }
 
   beforeEach(() => {
     // Register the element, if it is not yet registed
@@ -73,15 +78,13 @@ describe('Fluid tab group', () => {
     });
 
     it('should set active tab when property is set', async () => {
-      fixture.activetabid = 'section2';
+      fixture.activeTabId = 'section2';
       await tick();
       expect(fixture.getAttribute('activetabid')).toBe('section2');
     });
 
     it('should set last activetabid attribute when a tab is clicked', async () => {
-      const tab = fixture
-        .querySelector('fluid-tab:last-child')
-        ?.shadowRoot?.querySelector('span');
+      const tab = getSpanElementFromFluidTab();
       tab?.click();
       await tick();
       expect(fixture.getAttribute('activetabid')).toBe('section2');
@@ -105,21 +108,14 @@ describe('Fluid tab group', () => {
     // Test if tabindex is set to 0 when clicked or keyed to a tab
     it('should set tabindex to 0 when tab is clicked', async () => {
       await tick();
-      expect(
-        fixture.querySelector('fluid-tab:last-child')?.getAttribute('tabindex'),
-      ).toBe('-1');
-      fixture
-        .querySelector('fluid-tab:last-child')
-        ?.shadowRoot?.querySelector('span')
-        ?.click();
+      expect(getSpanElementFromFluidTab().getAttribute('tabindex')).toBe('-1');
+      getSpanElementFromFluidTab().click();
       await tick();
-      expect(
-        fixture.querySelector('fluid-tab:last-child')?.getAttribute('tabindex'),
-      ).toBe('0');
+      expect(getSpanElementFromFluidTab().getAttribute('tabindex')).toBe('0');
     });
 
     // Todo: Find out how to dispatch a keyboard event
-    it('should set tabindex to 0 when tab is navigated to using arrow keys', async () => {});
+    it('should set tabindex to 0 when tab is actived using keys', async () => {});
     // Test if tabindex is set to -1 when clicked or keyed to a tab
     // Should have tabindex -1 when element is disabled
   });

@@ -78,16 +78,15 @@ export class FluidTab extends LitElement {
    * @attr
    * @type number
    */
-  @property({ type: Number, reflect: true })
+  @property({ type: Number, reflect: false })
   get tabindex(): number {
     return this._tabindex;
   }
   set tabindex(value: number) {
     this._tabindex = value;
-    // TODO: Figure out why using the old value does not work. The attribute vanishes in the dom/is not set
     this.requestUpdate('tabindex');
   }
-  private _tabindex = 0;
+  private _tabindex = -1;
 
   /**
    * Defines whether a tab is active or not
@@ -99,13 +98,26 @@ export class FluidTab extends LitElement {
     return this._active;
   }
   set active(active: boolean) {
+    const oldActive = this._active;
     // Only set active true if not disabled
     this._active = this.disabled === false ? active : false;
-    // TODO: Figure out why using the old value does not work. The attribute vanishes in the dom/is not set
-    this.requestUpdate('active');
+    this.requestUpdate('active', oldActive);
     this.tabindex = this.active ? 0 : -1;
   }
   private _active = false;
+
+  /** Whether the user focused an element by tabbing or not */
+  @property({ type: Boolean, reflect: false })
+  get tabbed(): boolean {
+    return this._tabbed;
+  }
+  set tabbed(tabbed: boolean) {
+    const oldTabbed = this.tabbed;
+    this._tabbed = tabbed;
+    this.requestUpdate('tabbed', oldTabbed);
+    this.tabindex = tabbed === true ? 0 : -1;
+  }
+  private _tabbed = false;
 
   /** Dispatches the custom event  */
   private dispatchActiveTabEvent(): void {
@@ -119,6 +131,11 @@ export class FluidTab extends LitElement {
     }
   }
 
+  private handleBlur(): void {
+    this.tabbed = false;
+    this.tabindex = 0;
+  }
+
   /**
    * Render function of the custom element. It is called when one of the
    * observedProperties (annotated with @property) changes.
@@ -126,17 +143,30 @@ export class FluidTab extends LitElement {
   render(): TemplateResult {
     const classes = {
       'fluid-tab': true,
+      'fluid-tabbed': this.tabbed,
       'fluid-state--active': this._active,
     };
 
     // Linebreak causes the element to have a space
     return html`<span
       class=${classMap(classes)}
+      tabindex=${this.tabindex}
       ?disabled="${this.disabled}"
       @click="${this.handleClick}"
+      @blur="${this.handleBlur}"
     >
       <slot></slot>
     </span>`;
+  }
+
+  /** return the span element of the template as HTMLSpanElement */
+  private getSpanElement(): HTMLSpanElement {
+    return this.shadowRoot?.querySelector('span')!;
+  }
+
+  /** Focuses the span element in the template */
+  focusTab(): void {
+    this.getSpanElement().focus();
   }
 }
 

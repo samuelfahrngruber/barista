@@ -56,6 +56,10 @@
     left: 0;
     content: '';
   }
+
+  &:not(.fluid-tabbed):focus {
+    outline: none;
+  }
 }
 
 .fluid-state--active {

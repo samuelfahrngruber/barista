@@ -13,9 +13,6 @@
 
 .fluid-tab-group {
   color: var(--color-maxcontrast);
-  margin-block-start: $fluid-spacing--small;
-  margin-block-end: $fluid-spacing--small;
-  margin-inline-start: $fluid-spacing--0;
-  margin-inline-end: $fluid-spacing--0;
+  margin: $fluid-spacing--small $fluid-spacing--0;
   padding-inline-start: $fluid-spacing--medium;
 }
