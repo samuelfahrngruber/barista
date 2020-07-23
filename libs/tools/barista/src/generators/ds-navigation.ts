@@ -55,7 +55,7 @@ export const navigationBuilder = async () => {
     isDirectory(dirPath),
   );
 
-  const pages = allDirectories.map(async (directory) => {
+  for (const directory of allDirectories) {
     const currentPath = join(distDir, directory);
     const files = readdirSync(currentPath);
     const fileMap = new Map<string, any>();
@@ -93,7 +93,5 @@ export const navigationBuilder = async () => {
         encoding: 'utf8',
       });
     }
-  });
-
-  return Promise.all(pages);
+  }
 };
