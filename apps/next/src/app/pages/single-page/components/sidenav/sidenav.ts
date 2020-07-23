@@ -26,9 +26,5 @@ import { Component, Input } from '@angular/core';
 })
 export class DsSidenav {
   /** all sidenav items */
-  @Input()
-  set sidenavData(sidenavData) {
-    this._sections = sidenavData.sections;
-  }
-  _sections;
+  @Input() sidenavData;
 }

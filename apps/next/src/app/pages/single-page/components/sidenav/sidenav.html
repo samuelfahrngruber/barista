@@ -1,4 +1,4 @@
-<div *ngFor="let section of this._sections" class="ds-sidenav-section">
+<div *ngFor="let section of sidenavData.sections" class="ds-sidenav-section">
   <header class="ds-sidenav-section-title">{{section.title}}</header>
   <ul>
     <li *ngFor="let item of section.items">

@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { join } from 'path';
+import { join, basename } from 'path';
 import {
   promises as fs,
-  readFileSync,
   readdirSync,
   lstatSync,
 } from 'fs';
@@ -28,36 +27,17 @@ import {
 
 const distDir = './dist/next-data';
 
-/** add the sidenav to each page */
-function addSidenavToPages(
-  files: string[],
-  sidenavContent: DsSideNavContent,
-  path: string,
-): void {
-  for (const file of files) {
-    const filepath = join(path, file);
-    if (!lstatSync(filepath).isDirectory()) {
-      const content = JSON.parse(readFileSync(filepath).toString());
-
-      // add sidenav to the json file
-      content.sidenav = sidenavContent;
-      fs.writeFile(join(path, file), JSON.stringify(content, null, 2), {
-        flag: 'w', // "w" -> Create file if it does not exist
-        encoding: 'utf8',
-      });
-    }
-  }
-}
 
 function addNavSection(sideNav: DsSideNavContent, navGroup: string) {
-  for (const section of sideNav.sections) {
+  let newSideNav = {...sideNav};
+  for (const section of newSideNav.sections) {
     if(section.title && navGroup == section.title){
-      return sideNav;
+      return newSideNav;
     }
   }
 
-  sideNav.sections.push({title: navGroup, items: []});
-  return sideNav;
+  newSideNav.sections.push({title: navGroup, items: []});
+  return newSideNav;
 }
 
 /** Check if given path is a directory within distDir. */
@@ -76,20 +56,24 @@ export const navigationBuilder = async () => {
   );
 
   const pages = allDirectories.map(async (directory) => {
-    const path = join(distDir, directory);
-    const files = readdirSync(path);
+    const currentPath = join(distDir, directory);
+    const files = readdirSync(currentPath);
+    const fileMap = new Map<string, any>();
 
     let sideNav: DsSideNavContent = {
       sections: [],
     };
 
     for (const file of files) {
-      const content = JSON.parse(readFileSync(join(path, file)).toString());
+      const fileContent = await fs.readFile(join(currentPath, file), { encoding: 'utf-8' });
+      const content = JSON.parse(fileContent);
+      // Keep the file in memory to update after the sidenavs have been built.
+      fileMap.set(file, content);
 
       sideNav = addNavSection(sideNav, content.navGroup);
 
       for (const section of sideNav.sections) {
-        const filepath = join(directory, file.replace(/\.[^/.]+$/, ''));
+        const filepath = basename(join(directory, file), '.json');
 
         if(content.navGroup == section.title) {
           section.items.push(
@@ -101,7 +85,14 @@ export const navigationBuilder = async () => {
       }
     }
 
-    addSidenavToPages(files, sideNav, path);
+    for (const file of files) {
+      const content = fileMap.get(file);
+      // add sidenav to the json file
+      content.sidenav = sideNav;
+      await fs.writeFile(join(currentPath, file), JSON.stringify(content, null, 2), {
+        encoding: 'utf8',
+      });
+    }
   });
 
   return Promise.all(pages);
